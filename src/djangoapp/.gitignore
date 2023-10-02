@@ -172,3 +172,8 @@ cython_debug/
 #.idea/
 
 # End of https://www.toptal.com/developers/gitignore/api/django
+
+
+# setting.py
+# 이메일 아이디 등 정보가 있음
+settings.py
