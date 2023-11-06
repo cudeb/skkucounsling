@@ -1,24 +1,182 @@
 import { observer } from "mobx-react-lite";
 import { mainStore } from "../../dataflow/store";
+import { Button, HStack, Text, VStack } from "@chakra-ui/react";
+import IconSkkuSg from "../../resources/ic_skku_sg.png";
+import Appbar from "../Appbar";
+import IcCheveron from "../../resources/mainpage/ic_chevron_right.png";
+import IcAssign from "../../resources/mainpage/ic_assign.png";
+import IcCalendar from "../../resources/mainpage/ic_calendar.png";
+import IcTasks from "../../resources/mainpage/ic_tasks.png";
+import IcCounseling from "../../resources/mainpage/ic_counseling.png";
+import IcDocument from "../../resources/mainpage/ic_document.png";
+import { useNavigate } from "react-router";
+
+const SlideItem = ({
+  image,
+  title,
+  isEnd,
+}: {
+  image: string;
+  title: string;
+  isEnd?: Boolean;
+}) => {
+  return (
+    <HStack>
+      <VStack>
+        <div
+          style={{
+            padding: "1rem",
+            backgroundColor: "#a9a9a9",
+            borderRadius: "1rem",
+          }}
+        >
+          <img
+            src={image}
+            alt=""
+            style={{
+              width: "10rem",
+              height: "6rem",
+              //centerInside
+              objectFit: "contain",
+            }}
+          />
+        </div>
+        <Text size="3xl" as="b">
+          {title}
+        </Text>
+      </VStack>
+      {isEnd ? (
+        <></>
+      ) : (
+        <img
+          src={IcCheveron}
+          alt=""
+          style={{
+            width: "2rem",
+            height: "3rem",
+            position: "relative",
+            top: "-1rem",
+          }}
+        />
+      )}
+    </HStack>
+  );
+};
 
 const MainPage = observer(() => {
-    const store = mainStore;
+  const store = mainStore;
+  const navigation = useNavigate();
   return (
-    <div>
-        {
-            store.getFlag() ?
-            <div>
-                <h1>Flag On</h1>
-                <button onClick={() => store.setFlag(false)}>로그아웃</button>
-            </div>
-            :
-            <div>
-                <h1>Flag off</h1>
-                <button onClick={() => store.setFlag(true)}>로그인</button>
-            </div>
-        }
-      <h1>메인페이지</h1>
-    </div>
+    <VStack
+      style={{
+        height: "100vh",
+        overflow: "hidden",
+      }}
+    >
+      <Appbar>
+        <Button color="white" variant="link" size="lg">
+          HOME
+        </Button>
+        <Button
+          color="white"
+          variant="link"
+          size="lg"
+          onClick={() => {
+            navigation("/signup");
+          }}
+        >
+          SIGNUP
+        </Button>
+        <Button color="white" variant="link" size="lg">
+          LOGIN
+        </Button>
+      </Appbar>
+      <HStack
+        style={{
+          width: "100%",
+          paddingLeft: "2rem",
+        }}
+      >
+        <img
+          src={IconSkkuSg}
+          style={{ width: "8rem", height: "2rem" }}
+          alt=""
+        />
+        <div
+          style={{ width: "2px", height: "2rem", backgroundColor: "#a2a2a2" }}
+        />
+        <Text fontSize="3xl">성균관대학교 카운슬링센터 개인상담 홈페이지</Text>
+        <div style={{ flex: 1 }} />
+      </HStack>
+      <div
+        style={{
+          width: "100%",
+          height: "2px",
+          backgroundColor: "#a2a2a2",
+        }}
+      />
+      <HStack
+        style={{
+          marginTop: "2rem",
+        }}
+      >
+        <SlideItem image={IcDocument} title="상담신청서 작성 및 제출" />
+        <SlideItem image={IcCalendar} title="심리 검사 예약" />
+        <SlideItem image={IcTasks} title="심리 검사 진행행" />
+        <SlideItem image={IcAssign} title="상담사 배정" />
+        <SlideItem image={IcCounseling} title="상담 시작" isEnd />
+      </HStack>
+
+      <HStack
+        style={{
+          width: "100%",
+          backgroundColor: "#f2f2f2",
+          justifyContent: "center",
+          padding: "4rem",
+          marginTop: "2rem",
+        }}
+        gap="6rem"
+      >
+        <VStack
+          style={{
+            alignItems: "flex-start",
+          }}
+        >
+          <Text as="b" fontSize="xl">
+            학생용 서비스
+          </Text>
+          {`기약 없는 상담 예약 대기는 그만! 예상 상담일 고지
+              심리 검사일 지정 예약 
+              상담 일정 및 출석을 한눈에 확인
+              상담 별 기록 기능 제공`
+            .split("\n")
+            .map((line) => {
+              return <Text>•{line}</Text>;
+            })}
+        </VStack>
+        <VStack
+          style={{
+            alignItems: "flex-start",
+          }}
+        >
+          <Text as="b" fontSize="xl">
+            관리자용 서비스
+          </Text>
+          {`학생의 상담 신청서 필터링 및 열람
+학생 별 출석, 상담 기록, 피드백을 체계적으로 관리
+상담사의 상담 일정 캘린더로 한눈에 확인
+편리한 상담 일정 추가와 조정`
+            .split("\n")
+            .map((line) => {
+              return <Text>•{line}</Text>;
+            })}
+        </VStack>
+      </HStack>
+      <HStack style={{ width: "100%", padding: "1rem" }}>
+        <div style={{ flex: 1 }} />
+        <Button variant="link">{`카운슬링센터 홈페이지 바로가기 >>`}</Button>
+      </HStack>
+    </VStack>
   );
 });
 
