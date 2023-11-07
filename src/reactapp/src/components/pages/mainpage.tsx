@@ -98,30 +98,7 @@ const MainPage = observer(() => {
           LOGIN
         </Button>
       </Appbar>
-      <HStack
-        style={{
-          width: "100%",
-          paddingLeft: "2rem",
-        }}
-      >
-        <img
-          src={IconSkkuSg}
-          style={{ width: "8rem", height: "2rem" }}
-          alt=""
-        />
-        <div
-          style={{ width: "2px", height: "2rem", backgroundColor: "#a2a2a2" }}
-        />
-        <Text fontSize="3xl">성균관대학교 카운슬링센터 개인상담 홈페이지</Text>
-        <div style={{ flex: 1 }} />
-      </HStack>
-      <div
-        style={{
-          width: "100%",
-          height: "2px",
-          backgroundColor: "#a2a2a2",
-        }}
-      />
+
       <HStack
         style={{
           marginTop: "2rem",
