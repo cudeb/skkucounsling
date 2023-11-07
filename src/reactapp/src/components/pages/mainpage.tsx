@@ -87,7 +87,14 @@ const MainPage = observer(() => {
         >
           SIGNUP
         </Button>
-        <Button color="white" variant="link" size="lg">
+        <Button
+          color="white"
+          variant="link"
+          size="lg"
+          onClick={() => {
+            navigation("/login");
+          }}
+        >
           LOGIN
         </Button>
       </Appbar>
