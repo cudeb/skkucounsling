@@ -5,6 +5,7 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import SignupPage from "./components/pages/SignupPage";
 import Calendar from "./components/Calendar";
 import CalendarTest from "./components/CalendarTest";
+import LoginPage from "./components/pages/LoginPage";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/" element={<MainPage />} />
             <Route path="/calendar" element={<CalendarTest />} />
+            <Route path="/login" element={<LoginPage />} />
           </Routes>
         </Router>
       </ChakraProvider>
