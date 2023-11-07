@@ -6,6 +6,7 @@ import SignupPage from "./components/pages/SignupPage";
 import Calendar from "./components/Calendar";
 import CalendarTest from "./components/CalendarTest";
 import LoginPage from "./components/pages/LoginPage";
+import SignupDonePage from "./components/pages/SignupDonePage";
 
 function App() {
   return (
@@ -13,10 +14,14 @@ function App() {
       <ChakraProvider>
         <Router>
           <Routes>
+            {/**
+             * 페이지를 라우팅 테이블에 등록해주세요.
+             */}
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/" element={<MainPage />} />
             <Route path="/calendar" element={<CalendarTest />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/signupdone" element={<SignupDonePage />} />
           </Routes>
         </Router>
       </ChakraProvider>
