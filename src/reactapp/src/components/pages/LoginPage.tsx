@@ -2,7 +2,9 @@ import React from "react";
 import { Button, HStack, Input, Text, VStack } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
 import IconSkku from "../../resources/ic_skku_sg.png";
+import { useNavigate } from "react-router";
 const LoginPage = observer(() => {
+  const navigation = useNavigate();
   return (
     <VStack
       style={{
@@ -54,7 +56,7 @@ const LoginPage = observer(() => {
             }}
           >
             <Input
-              fontSize="lg"
+              fontSize="md"
               size="lg"
               variant="unstyled"
               placeholder="ID"
@@ -73,7 +75,7 @@ const LoginPage = observer(() => {
               }}
             />
             <Input
-              fontSize="lg"
+              fontSize="md"
               size="lg"
               variant="unstyled"
               placeholder="Password"
@@ -106,6 +108,7 @@ const LoginPage = observer(() => {
           colorScheme="green"
           style={{ width: "50%" }}
           size="lg"
+          onClick={() => navigation("/signup")}
         >
           회원가입
         </Button>
