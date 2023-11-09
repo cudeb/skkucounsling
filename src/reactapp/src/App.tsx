@@ -8,6 +8,7 @@ import CalendarTest from "./components/CalendarTest";
 import LoginPage from "./components/pages/LoginPage";
 import SignupDonePage from "./components/pages/SignupDonePage";
 import StudentMainPage from "./components/pages/StudentMainPage";
+import StudentApplyPage from "./components/pages/StudentApplyPage";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signupdone" element={<SignupDonePage />} />
             <Route path="/student/home" element={<StudentMainPage />} />
+            <Route path="/student/application" element={<StudentApplyPage />} />
           </Routes>
         </Router>
       </ChakraProvider>
