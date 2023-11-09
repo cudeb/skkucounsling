@@ -6,12 +6,14 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     user_type = models.CharField(max_length=20, choices=[('student', 'Student'), ('counselor', 'Counselor')])
-    email = models.EmailField(unique=True)
-    username = models.CharField(max_length=20, unique=False)
+    email = models.EmailField(unique=True) # 상담사는 임의 이메일 부여하여 생성
+    username = models.CharField(max_length=20, unique=False) # 실제 이름 ex) 정승혁
+    student_number =  models.CharField(max_length=20) # 학번, 상담사는 상담사 번호 부여
+    phone_number = models.CharField(max_length=20) # 연락처
+    birth = models.CharField(max_length=20) # 생년월일
 
+class Student(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE) # FK
     
-
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    user_type = models.CharField(max_length=20, choices=[('student', 'Student'), ('counselor', 'Counselor')])
-    email = models.EmailField(unique=True)
+class Counselor(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE) # FK

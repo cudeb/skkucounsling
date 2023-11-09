@@ -2,11 +2,12 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import authenticate
+from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken
+from django.contrib.auth import authenticate, login, logout
 
 # from django.contrib.auth.models import User
 
-from common.models import User, UserProfile
+from common.models import User
 
 
 class LoginAPIView(APIView):
@@ -24,7 +25,12 @@ class LoginAPIView(APIView):
         if user is not None:
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
-            res = {'access_token': access_token}
+            refresh_token = str(refresh)
+            res = {
+                    'access_token': access_token,
+                    'refresh_token': refresh_token,
+                    'user_type' : user.user_type
+                }
         else:
             res = {'error': 'Invalid credentials'}
                     
@@ -33,6 +39,8 @@ class LoginAPIView(APIView):
             return Response(res, status=status.HTTP_200_OK)
         else:
             return Response(res, status=status.HTTP_401_UNAUTHORIZED)
+        
+
     
     
     
@@ -56,7 +64,7 @@ class RegisterAPIView(APIView):
         # Transaction
         try:
             user = User.objects.create_user(username=username, password=password)
-            UserProfile.objects.create(user=user, email=email, user_type=user_type)
+            #UserProfile.objects.create(user=user, email=email, user_type=user_type)
             
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
