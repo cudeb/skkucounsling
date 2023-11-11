@@ -5,7 +5,7 @@ from django.dispatch import receiver
 from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
-    user_type = models.CharField(max_length=20, choices=[('student', 'Student'), ('counselor', 'Counselor')])
+    user_type = models.CharField(max_length=20)
     email = models.EmailField(unique=True) # 상담사는 임의 이메일 부여하여 생성
     username = models.CharField(max_length=20, unique=False) # 실제 이름 ex) 정승혁
     student_number =  models.CharField(max_length=20) # 학번, 상담사는 상담사 번호 부여

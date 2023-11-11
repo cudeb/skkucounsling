@@ -13,21 +13,18 @@ class CounselingApplication(models.Model):
 class CounselingPrefertimeslot(models.Model):
     counseling_application = models.ForeignKey(CounselingApplication, on_delete=models.CASCADE) # FK
     timeslot = models.CharField(max_length=10)
-    pass
+
 
 class Counseling(models.Model):
     counseling_application = models.ForeignKey(CounselingApplication, on_delete=models.CASCADE) # FK
     student = models.ForeignKey(Student, on_delete=models.CASCADE) # FK
     counselor = models.ForeignKey(Counselor, on_delete=models.CASCADE) # FK
-    pass
 
 
 class CounselingTestSchedule(models.Model):
     counseling = models.ForeignKey(Counseling, on_delete=models.CASCADE) # FK
     date = models.DateTimeField()
     timeslot = models.CharField(max_length=10)
-    pass
-
 
 class CounselingSchedule(models.Model):
     counseling = models.ForeignKey(Counseling, on_delete=models.CASCADE) # FK
@@ -35,9 +32,8 @@ class CounselingSchedule(models.Model):
     session_timeslot = models.CharField(max_length=10)
     session_number = models.IntegerField()
     session_status = models.CharField(max_length=10)
-    pass
+
 
 class CounselingJournals(models.Model):
     counseling_schedule = models.ForeignKey(CounselingSchedule, on_delete=models.CASCADE) # FK
     feedback = models.CharField(max_length=300)
-    pass
