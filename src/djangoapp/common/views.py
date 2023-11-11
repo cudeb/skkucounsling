@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 
 # from django.contrib.auth.models import User
 
-from common.models import User
+from common.models import User, Student, Counselor
 
 
 class LoginAPIView(APIView):
@@ -34,40 +34,22 @@ class LoginAPIView(APIView):
         else:
             res = {'error': 'Invalid credentials'}
                     
+        if user.user_type == 'student':
+            try:
+                student = Student.objects.get(user=user)
+            except Student.DoesNotExist:
+                student = Student(user=user)
+                student.save()
+                
+        elif user.user_type == 'counselor':
+            try:
+                counselor = Counselor.objects.get(user=user)
+            except Counselor.DoesNotExist:
+                counselor = Counselor(user=user)
+                counselor.save()
+                    
         # Response
         if user is not None:
             return Response(res, status=status.HTTP_200_OK)
         else:
             return Response(res, status=status.HTTP_401_UNAUTHORIZED)
-        
-
-    
-    
-    
-class RegisterAPIView(APIView):
-    '''
-    회원가입을 위한 뷰
-    '''
-    def post(self, request, format=None):
-        
-        username = request.data.get('username')
-        password = request.data.get('password')
-        user_type = request.data.get('user_type')
-        email = request.data.get('email')
-
-        # Validation
-        if not (username and password and email):
-            return Response({'error': '모든 필드는 필수입니다.'}, status=status.HTTP_400_BAD_REQUEST)
-        if user_type not in ['student', 'counselor']:
-            return Response({'error': '잘못된 유저타입 입니다.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Transaction
-        try:
-            user = User.objects.create_user(username=username, password=password)
-            #UserProfile.objects.create(user=user, email=email, user_type=user_type)
-            
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-        # 성공적인 응답
-        return Response({'message': '회원가입이 완료되었습니다.'}, status=status.HTTP_201_CREATED)
