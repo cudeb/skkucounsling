@@ -3,13 +3,13 @@ import "./App.css";
 import MainPage from "./components/pages/mainpage";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import SignupPage from "./components/pages/SignupPage";
-import Calendar from "./components/Calendar";
 import CalendarTest from "./components/CalendarTest";
 import LoginPage from "./components/pages/LoginPage";
 import SignupDonePage from "./components/pages/SignupDonePage";
 import StudentMainPage from "./components/pages/StudentMainPage";
 import StudentApplyPage from "./components/pages/StudentApplyPage";
 import { loginStore } from "./dataflow/store";
+import CounselingAdminPage from "./components/pages/CounselingAdminPage/CounselingAdminPage";
 
 function App() {
   return (
@@ -24,6 +24,7 @@ function App() {
             <Route path="/" element={<MainPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signupdone" element={<SignupDonePage />} />
+
             {loginStore.loginSuccess ? (
               <>
                 <Route path="/calendar" element={<CalendarTest />} />
@@ -33,6 +34,7 @@ function App() {
                   path="/student/application"
                   element={<StudentApplyPage />}
                 />
+                <Route path="/admin" element={<CounselingAdminPage />} />
               </>
             ) : (
               <>
