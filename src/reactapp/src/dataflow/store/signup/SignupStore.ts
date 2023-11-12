@@ -41,6 +41,10 @@ class SignupStore implements iSignupStore {
   isSignUpSuccess: boolean = false;
   signUpErrorMsg?: string = undefined;
 
+  /**
+   * Validate form fields.
+   * @returns true if all fields are valid, false otherwise.
+   */
   private formFieldValidation = () => {
     let isValid = true;
     [
@@ -61,11 +65,9 @@ class SignupStore implements iSignupStore {
         isValid = false;
       }
     });
-
     if (!isValid) {
       return isValid;
     }
-
     if (
       this.currentForm[SIGNUP_FIELD.PASSWORD] !==
       this.currentForm[SIGNUP_FIELD.CONFIRM_PASSWORD]
@@ -73,10 +75,26 @@ class SignupStore implements iSignupStore {
       this.signUpErrorMsg = "비밀번호 확인이 일치하지 않습니다.";
       return false;
     }
+    const password = this.currentForm[SIGNUP_FIELD.PASSWORD];
+    if (password.length < 8) {
+      this.signUpErrorMsg = "비밀번호는 8자 이상이어야 합니다.";
+      return false;
+    }
+    if (password.search(/[0-9]/g) < 0) {
+      this.signUpErrorMsg = "비밀번호는 숫자를 포함해야 합니다.";
+      return false;
+    }
+    if (password.search(/[a-zA-Z]/g) < 0) {
+      this.signUpErrorMsg = "비밀번호는 영문자를 포함해야 합니다.";
+      return false;
+    }
 
     return isValid;
   };
-
+  /**
+   * request signup to server.
+   * if success, set isSignUpSuccess to true.
+   */
   signUp = () => {
     if (!this.formFieldValidation()) {
       return;
@@ -101,7 +119,6 @@ class SignupStore implements iSignupStore {
       .onFailed((code: number, msg?: string) => {
         this.signUpErrorMsg = msg;
       })
-
       .send();
   };
 
