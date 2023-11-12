@@ -24,23 +24,26 @@ function App() {
             <Route path="/" element={<MainPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signupdone" element={<SignupDonePage />} />
+            {
+              // 로그인이 정상적일 경우에만 라우팅을 허용합니다.
+              true ? (
+                //loginStore.loginSuccess ? (
+                <>
+                  <Route path="/calendar" element={<CalendarTest />} />
 
-            {loginStore.loginSuccess ? (
-              <>
-                <Route path="/calendar" element={<CalendarTest />} />
-
-                <Route path="/student/home" element={<StudentMainPage />} />
-                <Route
-                  path="/student/application"
-                  element={<StudentApplyPage />}
-                />
-                <Route path="/admin" element={<CounselingAdminPage />} />
-              </>
-            ) : (
-              <>
-                <Route path="/*" element={<LoginPage />} />
-              </>
-            )}
+                  <Route path="/student/home" element={<StudentMainPage />} />
+                  <Route
+                    path="/student/application"
+                    element={<StudentApplyPage />}
+                  />
+                  <Route path="/admin" element={<CounselingAdminPage />} />
+                </>
+              ) : (
+                <>
+                  <Route path="/*" element={<LoginPage />} />
+                </>
+              )
+            }
           </Routes>
         </Router>
       </ChakraProvider>

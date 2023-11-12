@@ -5,6 +5,8 @@ import Calendar from "../Calendar";
 import IconDocument from "../../resources/calendar/icon_document.png";
 import IconCheck from "../../resources/calendar/icon_check.png";
 import IconClick from "../../resources/calendar/icon_click.png";
+import { useEffect } from "react";
+import { studentStore } from "../../dataflow/store/student/StudentStore";
 
 const TaskAttendancyOerview = observer(() => {
   return (
@@ -143,6 +145,10 @@ const CalendarPage = observer(() => {
 });
 
 const StudentMainPage = observer(() => {
+  useEffect(() => {
+    studentStore.fetchSchedule();
+  }, []);
+
   return (
     <VStack
       style={{

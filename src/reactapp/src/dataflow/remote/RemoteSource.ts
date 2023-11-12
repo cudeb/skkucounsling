@@ -4,6 +4,7 @@ import {
   RemoteSourceUrl,
   CSRF_TOKEN,
 } from "../../const/RemoteConst";
+import { loginStore } from "../store";
 import { cookieManager } from "./CookieManager";
 
 class Request {
@@ -137,6 +138,13 @@ class RemoteSource {
     onSuccess: (json: string) => void,
     onFailed: (code: number, msg?: string) => void
   ) => {
+    if (response.status === 401) {
+      cookieManager.updateCookie(COOKIE_TOKEN, "", 1);
+      cookieManager.updateCookie(COOKIE_REFRESH, "", 1);
+      loginStore.initStatus();
+      return;
+    }
+
     if (response.status === 200) {
       if (response.headers.get("content-type") !== "application/json") {
         onSuccess(await response.text());
