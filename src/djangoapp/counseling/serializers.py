@@ -7,11 +7,11 @@ class CounselingApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CounselingApplication
         fields = (
+            "id",
             "student",
             "application_file",
             "applied_at",
-            "counseling_type",
-            "counseling_field"
+            "counseling_type"
         )
         
 
@@ -20,6 +20,7 @@ class CounselingSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Counseling
         fields = (
+            "id",
             "counseling_application",
             "student",
             "counselor",
@@ -31,6 +32,7 @@ class CounselingScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CounselingSchedule
         fields = (
+            "id",
             "counseling",
             "session_date",
             "session_timeslot",
@@ -44,8 +46,26 @@ class CounselingJournalsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CounselingJournals
         fields = (
+            "id",
             "counseling_schedule",
             "feedback"
         )
 
+class CounselingPrefertimeslotSerializer(serializers.ModelSerializer):
     
+    class Meta:
+        model = models.CounselingPrefertimeslot
+        fields = (
+            "id",
+            "timeslot"
+
+        )
+
+class CounselingPreferfieldSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = models.CounselingPreferfield
+        fields = (
+            "id",
+            "field"
+        )

@@ -2,9 +2,9 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Counseling, CounselingApplication, CounselingJournals, CounselingPrefertimeslot, CounselingSchedule, CounselingTestSchedule
+from .models import Counseling, CounselingApplication, CounselingJournals, CounselingPrefertimeslot, CounselingSchedule, CounselingTestSchedule, CounselingPreferfield
 from common.models import User, Student, Counselor
-from .serializers import CounselingApplicationSerializer, CounselingScheduleSerializer, CounselingJournalsSerializer, CounselingSerializer
+from .serializers import CounselingApplicationSerializer, CounselingScheduleSerializer, CounselingJournalsSerializer, CounselingSerializer, CounselingPreferfieldSerializer, CounselingPrefertimeslotSerializer
 import datetime
 # Create your views here.
 
@@ -20,7 +20,7 @@ class CounselingInfoStudent(APIView):
             return Response(res, status=status.HTTP_401_UNAUTHORIZED)
         if user.user_type != 'student':
             res['error'] = "학생이 아닙니다."
-            return Response(res, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
         
         student = Student.objects.get(user=user)
         counseling = Counseling.objects.filter(student=student)
@@ -38,7 +38,7 @@ class CounselingScheduleStudent(APIView):
             return Response(res, status=status.HTTP_401_UNAUTHORIZED)
         if user.user_type != 'student':
             res['error'] = "학생이 아닙니다."
-            return Response(res, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
         
         
         student = Student.objects.get(user=user)
@@ -57,18 +57,16 @@ class CounselingJournalStudent(APIView):
             return Response(res, status=status.HTTP_401_UNAUTHORIZED)
         if user.user_type != 'student':
             res['error'] = "학생이 아닙니다."
-            return Response(res, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
         
         schedule_id = request.GET.get('schedule_id')
         
         counseling_journals = CounselingJournals.objects.filter(counseling_schedule=schedule_id)
-        res['counseling_journals'] = CounselingScheduleSerializer(counseling_journals, many=True).data
+        res['counseling_journals'] = CounselingJournalsSerializer(counseling_journals, many=True).data
         return Response(res, status=status.HTTP_200_OK)
     
     
-    
-    
-    
+
 class CounselingApply(APIView):
     # 학생의 상담신청
     def post(self, request, *args, **kwargs):
@@ -79,52 +77,47 @@ class CounselingApply(APIView):
             return Response(res, status=status.HTTP_401_UNAUTHORIZED)
         if user.user_type != 'student':
             res['error'] = "학생이 아닙니다."
-            return Response(res, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
         
         student = Student.objects.get(user=user)
         
         application = request.FILES.get('application')
         applied_at = request.data.get('applied_at')
         counseling_type = request.data.get('counseling_type')
-        counseling_field = request.data.get('counseling_field')
         prefer_timeslots =  request.data.get('prefer_timeslots')
+        prefer_fields = request.data.get('prefer_fields')
         
-        #신청서 객체 생성
+        # 신청서 객체 생성
         counseling_application = \
             CounselingApplication(
                 student=student,
                 application=application,
                 applied_at=applied_at,
                 counseling_type=counseling_type,
-                counseling_field=counseling_field
             )
         
         counseling_application.save()
         
+        # 타임슬롯 지정
         for timeslot in prefer_timeslots:
             counseling_prefer_timeslot = \
-                    CounselingPrefertimeslot(
+                CounselingPrefertimeslot(
                     counseling_application=counseling_application,
                     timeslot=timeslot
                 )
             counseling_prefer_timeslot.save()
 
-        #상담 객체 생성
-        counseling = \
-            Counseling(counseling_application=counseling_application,counselor=None,student=student)
-        counseling.save()
+        # 상담분야 지정
+        for field in prefer_fields:
+            counseling_prefer_field = \
+                CounselingPreferfield(
+                    counseling_application=counseling_application,
+                    field=field
+                )
+            counseling_prefer_field.save()
 
-        #심리검사 객체 생성
-        date = request.data.get('date')
-        timeslot = request.data.get('timeslot')
-        counseling_test_schedule = \
-            CounselingTestSchedule(counseling=counseling,date = date,
-                                   timeslot = timeslot)
-        counseling_test_schedule.save()
 
         return Response(status=status.HTTP_200_OK)
-    
-    
     
     
 class CounselingInfoCounselor(APIView):
@@ -137,7 +130,7 @@ class CounselingInfoCounselor(APIView):
             return Response(res, status=status.HTTP_401_UNAUTHORIZED)
         if user.user_type != 'counselor':
             res['error'] = "상담사가 아닙니다."
-            return Response(res, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
         
         counselor = Counselor.objects.get(user=user)
         counseling = Counseling.objects.filter(counselor=counselor)
@@ -156,7 +149,7 @@ class CounselingScheduleCounselor(APIView):
             return Response(res, status=status.HTTP_401_UNAUTHORIZED)
         if user.user_type != 'counselor':
             res['error'] = "상담사가 아닙니다."
-            return Response(res, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
         
         counselor = Counselor.objects.get(user=user)
         counseling_schedule = CounselingSchedule.objects.filter(counseling__counselor=counselor)
@@ -174,12 +167,12 @@ class CounselingJournalCounselor(APIView):
             return Response(res, status=status.HTTP_401_UNAUTHORIZED)
         if user.user_type != 'counselor':
             res['error'] = "상담사가 아닙니다."
-            return Response(res, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
         
         schedule_id = request.GET.get('schedule_id')
         
-        counseling_journals = CounselingJournals.objects.filter(counseling_schedule=schedule_id)
-        res['counseling_journals'] = CounselingScheduleSerializer(counseling_journals, many=True).data
+        counseling_journals = CounselingJournals.objects.get(counseling_schedule=schedule_id)
+        res['counseling_journals'] = CounselingScheduleSerializer(counseling_journals).data
         
         return Response(res, status=status.HTTP_200_OK)
     
@@ -193,9 +186,9 @@ class CounselingFeedback(APIView):
             return Response(res, status=status.HTTP_401_UNAUTHORIZED)
         if user.user_type != 'counselor':
             res['error'] = "상담사가 아닙니다."
-            return Response(res, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
         
-        schedule_id = request.GET.get('schedule_id')
+        schedule_id = request.data.get('schedule_id')
 
         counseling_journals = CounselingJournals.objects.get(counseling_schedule=schedule_id)
 
@@ -207,20 +200,28 @@ class CounselingFeedback(APIView):
     
     
 class CounselingApplications(APIView):
-    # 승인되지 않은 상담 신청서 전체 반환
+    # 전체 상담 신청서 전체 반환
     def get(self, request, *args, **kwargs):
         user = request.user
         res = {}
         if not user.is_authenticated:
             res['error'] = "로그인이 필요합니다."
             return Response(res, status=status.HTTP_401_UNAUTHORIZED)
-        if user.user_type != 'counselor':
-            res['error'] = "상담사가 아닙니다."
-            return Response(res, status=status.HTTP_401_UNAUTHORIZED)
+        #if user.user_type != 'counselor':
+        #    res['error'] = "상담사가 아닙니다."
+        #    return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
+        counseling_applications = CounselingApplication.objects.all().values('id', 'student', 'application_file', 'applied_at', 'counseling_type', 'approved', 'denied')
 
-        counseling_application = CounselingApplication.objects.filter(approved=False)
-        res['counseling_application'] = CounselingApplicationSerializer(counseling_application,many=True).data
-        Response(res,status=status.HTTP_200_OK)
+        for counseling_application in counseling_applications:
+
+            counseling_prefertimeslots = CounselingPrefertimeslot.objects.filter(counseling_application=counseling_application['id'])
+            counseling_application['counseling_prefertimeslots'] = CounselingPrefertimeslotSerializer(counseling_prefertimeslots, many=True).data
+            counseling_preferfields = CounselingPreferfield.objects.filter(counseling_application=counseling_application['id'])
+            counseling_application['counseling_preferfields'] = CounselingPreferfieldSerializer(counseling_preferfields, many=True).data
+        
+        res['couseling_applications'] = counseling_applications
+        
+        return Response(res, status=status.HTTP_200_OK)
         
         
 class CounselingApplicationFormalApproval(APIView):
@@ -233,14 +234,13 @@ class CounselingApplicationFormalApproval(APIView):
             return Response(res, status=status.HTTP_401_UNAUTHORIZED)
         if user.user_type != 'counselor':
             res['error'] = "상담사가 아닙니다."
-            return Response(res, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
 
-        #학생의 상담 선호 시간과 상담사의 상담 스케줄 불러오기
-        student_number = request.data.get('student_number')
-        user_student = User.objects.get(student_number=student_number)
-        student = Student.objects.get(user=user_student)
-        counseling_application = CounselingApplication.objects.get(student=student)
+        # 해당 신청서의 상담 선호 시간, 선호 분야 상담사의 상담 스케줄 불러오기
+        application_id = request.GET.get('application_id')
+        counseling_application = CounselingApplication.objects.get(id=application_id)
         counseling_prefertimeslots = CounselingPrefertimeslot.objects.filter(counseling_application=counseling_application)
+        counseling_preferfields = CounselingPreferfield.objects.filter(counseling_application=counseling_application)
 
         counselor = Counselor.objects.get(user=user)
         counseling_schedules = CounselingSchedule.objects.filter(counseling__counselor=counselor)
@@ -248,6 +248,7 @@ class CounselingApplicationFormalApproval(APIView):
         
         #학생의 선호 상담 시간을 바탕으로 자동으로 상담 날짜 추천
         date_dict = {0:'MON',1:'TUE',2:'WED',3:'THU',4:'FRI',5:'SAT',6:'SUN'}
+        
         for prefertimeslot in counseling_prefertimeslots: #학생이 선호하는 timeslot 마다
             day,time = prefertimeslot.timeslot[:3],prefertimeslot[3:]   #day(요일)와 time(시간) 분리
             date = datetime.datetime.today() + datetime.timedelta(days=1) #현재 날짜 다음날부터 day(선호 요일)과 일치하는 요일인 날짜 선택
@@ -263,8 +264,10 @@ class CounselingApplicationFormalApproval(APIView):
                             res['auto_recommend'] = {'date':date.date(),'time':time}
                             return Response(res,status=status.HTTP_200_OK)
                 date += datetime.timedelta(days=7)
+                
         res['auto_recommend'] = 'None'
-        return Response(res,status=status.HTTP_200_OK)
+        
+        return Response(res, status=status.HTTP_200_OK)
 
 
 class CounselingApplicationApproval(APIView):
@@ -277,32 +280,53 @@ class CounselingApplicationApproval(APIView):
             return Response(res, status=status.HTTP_401_UNAUTHORIZED)
         if user.user_type != 'counselor':
             res['error'] = "상담사가 아닙니다."
-            return Response(res, status=status.HTTP_401_UNAUTHORIZED)
-
-        #학번을 통해 상담 객체 불러오기
-        student_number = request.data.get('student_number')
-        user_student = User.objects.get(student_number=student_number)
-        student = Student.objects.get(user=user_student)
-        counseling = Counseling.objects.get(student=student)
-
-        #상담 객체에 상담사 배정해주기
-        counseling.counselor = Counselor.objects.get(user=user)
-        counseling.save()
+            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
+        
+        application_id = request.data.get('application_id')
+        
 
         #신청서 승인 상태로 바꾸기
-        counseling_application = CounselingApplication.objects.get(student=student)
+        counseling_application = CounselingApplication.objects.get(id=application_id)
         counseling_application.approved = True
         counseling_application.save()
         
-        #상담사가 선택한 상담 날짜와 시간 받아오기
+        #상담 객체 생성 + 승인한 상담사로 상담사 배정
+        student = counseling_application.student
+        counselor = Counselor.objects.get(user=user)
+        counseling = \
+            Counseling(
+                counseling_application=counseling_application, 
+                counselor=counselor, 
+                student=student
+            )
+        counseling.save()
+
+        # 심리검사 객체 생성
+        date = request.data.get('date')
+        timeslot = request.data.get('timeslot')
+        
+        counseling_test_schedule = \
+            CounselingTestSchedule(
+                counseling=counseling,
+                date=date,
+                timeslot=timeslot
+            )
+            
+        counseling_test_schedule.save()
+        
+        
+        # 상담사가 선택한 상담 날짜와 시간 받아오기
         session_date = request.data.get('session_date')
         session_timeslot = request.data.get('session_timeslot')
 
-        #상담 스케줄 객체 만들기 (첫 신청일때는 1개의 스케줄 생성.. 첫 상담 후에 추가/업데이트..)
+        # 상담 스케줄 객체 만들기 (첫 신청일때는 1개의 스케줄 생성.. 첫 상담 후에 추가/업데이트..)
         counseling_schedule = \
-            CounselingSchedule(counseling=counseling,session_date=session_date,
-                               session_timeslot=session_timeslot,session_number=1,
-                               session_status='Yet')
+             CounselingSchedule(
+                 counseling=counseling,session_date=session_date,
+                 session_timeslot=session_timeslot,
+                 session_number=1,
+                session_status='Yet'
+             )
         counseling_schedule.save()
 
         return Response(status=status.HTTP_200_OK)
@@ -318,15 +342,14 @@ class CounselingApplicationDenial(APIView):
             return Response(res, status=status.HTTP_401_UNAUTHORIZED)
         if user.user_type != 'counselor':
             res['error'] = "상담사가 아닙니다."
-            return Response(res, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
+        
 
-        #상담 객체 삭제
-        student_number = request.data.get('student_number')
-        user_student = User.objects.get(student_number=student_number)
-        student = Student.objects.get(user=user_student)
-        counseling = Counseling.objects.get(student=student)
-        counseling.delete()
-
+        application_id = request.data.get('application_id')
+        counseling_application = CounselingApplication.objects.get(id=application_id)
+        counseling_application.denied = True
+        counseling_application.save()
+            
         return Response(status=status.HTTP_200_OK)
 
 
@@ -340,21 +363,23 @@ class CounselingScheduleAdd(APIView):
             return Response(res, status=status.HTTP_401_UNAUTHORIZED)
         if user.user_type != 'counselor':
             res['error'] = "상담사가 아닙니다."
-            return Response(res, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
 
         #상담 스케줄 객체 만들기
-        student_number = request.data.get('student_number')
-        user_student = User.objects.get(student_number=student_number)
-        student = Student.objects.get(user=user_student)
-        counseling = Counseling.objects.get(student=student)
+        counseling_id = request.data.get('counseling_id')
+        counseling = Counseling.objects.get(id=counseling_id)
         session_date = request.data.get('session_date')
         session_timeslot = request.data.get('session_timeslot')
         session_number = request.data.get('session_number')
         
         counseling_schedule = \
-            CounselingSchedule(counseling=counseling, session_date=session_date,
-                               session_timeslot=session_timeslot, session_number=session_number,
-                               session_status='Yet')
+            CounselingSchedule(
+                counseling=counseling,
+                session_date=session_date,
+                session_timeslot=session_timeslot,
+                session_number=session_number,
+                session_status='Yet'
+            )
         counseling_schedule.save()
 
         return Response(status=status.HTTP_200_OK)
@@ -370,22 +395,21 @@ class CounselingScheduleUpdate(APIView):
             return Response(res, status=status.HTTP_401_UNAUTHORIZED)
         if user.user_type != 'counselor':
             res['error'] = "상담사가 아닙니다."
-            return Response(res, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
 
         # 상담 스케줄 객체 업데이트
-        student_number = request.data.get('student_number')
-        user_student = User.objects.get(student_number=student_number)
-        student = Student.objects.get(user=user_student)
-        counseling = Counseling.objects.get(student=student)
+        schedule_id = request.data.get('schedule_id')
         session_date = request.data.get('session_date')
         session_timeslot = request.data.get('session_timeslot')
         session_number = request.data.get('session_number')
         session_status = request.data.get('session_status')
 
-        counseling_schedule = CounselingSchedule.objects.get(counseling=counseling,session_number=session_number)
+        counseling_schedule = CounselingSchedule.objects.get(id=schedule_id)
         counseling_schedule.session_date = session_date
-        counseling_schedule.timeslot = session_timeslot
+        counseling_schedule.session_timeslot = session_timeslot
+        counseling_schedule.session_number = session_number
         counseling_schedule.session_status = session_status
         counseling_schedule.save()
 
-        return Response(status=status.HTTP_200_OK)
+        return Response(res, status=status.HTTP_200_OK)
+    
