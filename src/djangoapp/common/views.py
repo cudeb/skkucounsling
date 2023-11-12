@@ -31,22 +31,23 @@ class LoginAPIView(APIView):
                     'refresh_token': refresh_token,
                     'user_type' : user.user_type
                 }
-        else:
-            res = {'error': 'Invalid credentials'}
+            if user.user_type == 'student':
+                try:
+                    student = Student.objects.get(user=user)
+                except Student.DoesNotExist:
+                    student = Student(user=user)
+                    student.save()
                     
-        if user.user_type == 'student':
-            try:
-                student = Student.objects.get(user=user)
-            except Student.DoesNotExist:
-                student = Student(user=user)
-                student.save()
-                
-        elif user.user_type == 'counselor':
-            try:
-                counselor = Counselor.objects.get(user=user)
-            except Counselor.DoesNotExist:
-                counselor = Counselor(user=user)
-                counselor.save()
+            elif user.user_type == 'counselor':
+                try:
+                    counselor = Counselor.objects.get(user=user)
+                except Counselor.DoesNotExist:
+                    counselor = Counselor(user=user)
+                    counselor.save()
+        else:
+             res = {'error': 'Invalid credentials'}
+                    
+
                     
         # Response
         if user is not None:
