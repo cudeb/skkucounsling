@@ -5,6 +5,7 @@ from django.dispatch import receiver
 from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
+    id = models.IntegerField(primary_key=True)
     user_type = models.CharField(max_length=20)
     email = models.EmailField(unique=True) # 상담사는 임의 이메일 부여하여 생성
     username = models.CharField(max_length=20, unique=False) # 실제 이름 ex) 정승혁
@@ -13,7 +14,9 @@ class User(AbstractUser):
     birth = models.CharField(max_length=20) # 생년월일
 
 class Student(models.Model):
+    id = models.IntegerField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE) # FK
     
 class Counselor(models.Model):
+    id = models.IntegerField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE) # FK
