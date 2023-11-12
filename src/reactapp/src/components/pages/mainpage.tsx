@@ -82,7 +82,7 @@ const MainPage = observer(() => {
           variant="link"
           size="lg"
           onClick={() => {
-            navigation("/signup");
+            navigation("/signuppage");
           }}
         >
           SIGNUP

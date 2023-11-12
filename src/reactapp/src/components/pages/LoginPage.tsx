@@ -1,10 +1,34 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, HStack, Input, Text, VStack } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
 import IconSkku from "../../resources/ic_skku_sg.png";
 import { useNavigate } from "react-router";
+import { loginStore } from "../../dataflow/store";
 const LoginPage = observer(() => {
   const navigation = useNavigate();
+
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+
+  useEffect(() => {
+    if (loginStore.loginSuccess) {
+      navigation("/main");
+    }
+
+    if (loginStore.errorMsg) {
+      alert(loginStore.errorMsg);
+      loginStore.errorMsg = "";
+    }
+  }, [loginStore.loginSuccess, loginStore.errorMsg]);
+
+  const onClickLogin = () => {
+    if (email === "" || password === "") {
+      alert("아이디와 비밀번호를 입력해주세요.");
+      return;
+    }
+    loginStore.loginWithAccount(email, password);
+  };
+
   return (
     <VStack
       style={{
@@ -60,6 +84,7 @@ const LoginPage = observer(() => {
               size="lg"
               variant="unstyled"
               placeholder="ID"
+              onChange={(e) => setEmail(e.target.value)}
               style={{
                 height: "2rem",
                 paddingLeft: "1rem",
@@ -79,6 +104,8 @@ const LoginPage = observer(() => {
               size="lg"
               variant="unstyled"
               placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
+              type="password"
               style={{
                 height: "2rem",
                 paddingLeft: "1rem",
@@ -91,6 +118,9 @@ const LoginPage = observer(() => {
             colorScheme="green"
             size="lg"
             style={{ width: "100%" }}
+            onClick={() => {
+              onClickLogin();
+            }}
           >
             로그인
           </Button>
@@ -108,7 +138,7 @@ const LoginPage = observer(() => {
           colorScheme="green"
           style={{ width: "50%" }}
           size="lg"
-          onClick={() => navigation("/signup")}
+          onClick={() => navigation("/signuppage")}
         >
           회원가입
         </Button>

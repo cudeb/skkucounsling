@@ -1,8 +1,9 @@
 import { Button, Text, VStack } from "@chakra-ui/react";
 import EmailIcon from "../../resources/sign/icon_email.png";
 import { useNavigate } from "react-router";
+import { cookieManager } from "../../dataflow/remote/CookieManager";
 const SignupDonePage = () => {
-  const email = "email.skku";
+  const email = cookieManager.readCookie("useremail");
   const navigation = useNavigate();
   return (
     <VStack
