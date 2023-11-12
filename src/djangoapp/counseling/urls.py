@@ -16,4 +16,10 @@ urlpatterns = [
     path('schedule-counselor/', views.CounselingScheduleCounselor.as_view(), name='schedule-counselor'),
     path('journal-counselor/', views.CounselingJournalCounselor.as_view(), name='journal-counselor'),
     path('feedback/', views.CounselingFeedback.as_view(), name='feedback'),
+    path('schedule-update/',views.CounselingScheduleUpdate.as_view(),name='schedule-update'),
+    path('schedule-add',views.CounselingScheduleAdd.as_view(),name='schedule-add'),
+    path('applications/',views.CounselingApplications.as_view(),name='applications'),
+    path('application-formal-approval/',views.CounselingApplicationFormalApproval.as_view(),name='application-formal-approval'),
+    path('application-approval/',views.CounselingApplicationApproval.as_view(),name='application-approval'),
+    path('application-denial/',views.CounselingApplicationDenial.as_view(),name='application-denial'),
 ]

@@ -8,6 +8,7 @@ class CounselingApplication(models.Model):
     applied_at = models.DateTimeField(auto_now_add=True)
     counseling_type = models.CharField(max_length=30)
     counseling_field = models.CharField(max_length=30)
+    approved = models.BooleanField(default=False)
 
 
 class CounselingPrefertimeslot(models.Model):
@@ -18,7 +19,7 @@ class CounselingPrefertimeslot(models.Model):
 class Counseling(models.Model):
     counseling_application = models.ForeignKey(CounselingApplication, on_delete=models.CASCADE) # FK
     student = models.ForeignKey(Student, on_delete=models.CASCADE) # FK
-    counselor = models.ForeignKey(Counselor, on_delete=models.CASCADE) # FK
+    counselor = models.ForeignKey(Counselor, on_delete=models.CASCADE,null=True) # FK
 
 
 class CounselingTestSchedule(models.Model):
