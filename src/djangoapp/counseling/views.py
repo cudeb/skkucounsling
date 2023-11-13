@@ -81,7 +81,7 @@ class CounselingApply(APIView):
         
         student = Student.objects.get(user=user)
         
-        application = request.FILES.get('application')
+        application_file = request.FILES.get('application')
         applied_at = request.data.get('applied_at')
         counseling_type = request.data.get('counseling_type')
         test_date = request.data.get('test_date')
@@ -93,7 +93,7 @@ class CounselingApply(APIView):
         counseling_application = \
             CounselingApplication(
                 student=student,
-                application=application,
+                application_file=application_file,
                 applied_at=applied_at,
                 counseling_type=counseling_type,
                 test_date = test_date,
