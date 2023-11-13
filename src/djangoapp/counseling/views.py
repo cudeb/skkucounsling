@@ -84,6 +84,8 @@ class CounselingApply(APIView):
         application = request.FILES.get('application')
         applied_at = request.data.get('applied_at')
         counseling_type = request.data.get('counseling_type')
+        test_date = request.data.get('test_date')
+        test_timeslot = request.data.get('test_timeslot')
         prefer_timeslots =  request.data.get('prefer_timeslots')
         prefer_fields = request.data.get('prefer_fields')
         
@@ -94,6 +96,8 @@ class CounselingApply(APIView):
                 application=application,
                 applied_at=applied_at,
                 counseling_type=counseling_type,
+                test_date = test_date,
+                test_timeslot = test_timeslot,
             )
         
         counseling_application.save()
@@ -210,7 +214,7 @@ class CounselingApplications(APIView):
         #if user.user_type != 'counselor':
         #    res['error'] = "상담사가 아닙니다."
         #    return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
-        counseling_applications = CounselingApplication.objects.all().values('id', 'student', 'application_file', 'applied_at', 'counseling_type', 'approved', 'denied')
+        counseling_applications = CounselingApplication.objects.all().values('id', 'student', 'application_file', 'applied_at', 'counseling_type', 'test_date', 'test_timeslot', 'approved', 'denied')
 
         for counseling_application in counseling_applications:
 
@@ -248,23 +252,29 @@ class CounselingApplicationFormalApproval(APIView):
         
         #학생의 선호 상담 시간을 바탕으로 자동으로 상담 날짜 추천
         date_dict = {0:'MON',1:'TUE',2:'WED',3:'THU',4:'FRI',5:'SAT',6:'SUN'}
-        
-        for prefertimeslot in counseling_prefertimeslots: #학생이 선호하는 timeslot 마다
-            day,time = prefertimeslot.timeslot[:3],prefertimeslot[3:]   #day(요일)와 time(시간) 분리
-            date = datetime.datetime.today() + datetime.timedelta(days=1) #현재 날짜 다음날부터 day(선호 요일)과 일치하는 요일인 날짜 선택
-            for i in range(7):
-                if date_dict[date.weekday()] == day:
-                    break
-                else:
-                    date += datetime.timedelta(days=1)
-            for i in range(5): # 해당 날짜에 상담사의 상담 일정이 없으면 추천, 있으면 다음 주도 확인, 한달(5주) 안에 해당 날짜 없으면 추천 포기
+        date = datetime.datetime.today() + datetime.timedelta(days=1)
+        for i in range(5): #한달(5주) 안에 해당 날짜 없으면 추천 포기
+            date += datetime.timedelta(days=7*i)
+            for prefertimeslot in counseling_prefertimeslots: #학생이 선호하는 timeslot 마다     
+                temp_date = date           
+                day,time = prefertimeslot.timeslot[:3],prefertimeslot.timeslot[3:]   #day(요일)와 time(시간) 분리
+                 #date(현재 날짜 다음날)부터 day(선호 요일)과 일치하는 요일인 날짜 선택
+                for i in range(7):
+                    if date_dict[date.weekday()] == day:
+                        break
+                    else:
+                        date += datetime.timedelta(days=1)
+                # 해당 날짜/시간에 상담사의 상담 일정이 없으면 추천, 있으면 패스
+                check = False 
                 for counseling_schedule in counseling_schedules:
-                    if counseling_schedule.date.date() != date.date():
-                        if counseling_schedule.timeslot[3:] != time:
-                            res['auto_recommend'] = {'date':date.date(),'time':time}
-                            return Response(res,status=status.HTTP_200_OK)
-                date += datetime.timedelta(days=7)
-                
+                    if counseling_schedule.session_date.date() == date.date():
+                        if counseling_schedule.session_timeslot[3:] == time:
+                            check = True
+                            break
+                if(not check):
+                    res['auto_recommend'] = {'date':date.date(),'time':time}
+                    return Response(res,status=status.HTTP_200_OK)
+                date = temp_date
         res['auto_recommend'] = 'None'
         
         return Response(res, status=status.HTTP_200_OK)
@@ -302,14 +312,14 @@ class CounselingApplicationApproval(APIView):
         counseling.save()
 
         # 심리검사 객체 생성
-        date = request.data.get('date')
-        timeslot = request.data.get('timeslot')
+        test_date = request.data.get('test_date')
+        test_timeslot = request.data.get('test_timeslot')
         
         counseling_test_schedule = \
             CounselingTestSchedule(
                 counseling=counseling,
-                date=date,
-                timeslot=timeslot
+                date=test_date,
+                timeslot=test_timeslot
             )
             
         counseling_test_schedule.save()

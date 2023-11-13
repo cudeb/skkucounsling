@@ -8,6 +8,8 @@ class CounselingApplication(models.Model):
     application_file =  models.FileField(upload_to="application", null=False)
     applied_at = models.DateTimeField(auto_now_add=True)
     counseling_type = models.CharField(max_length=30)
+    test_date = models.DateField()
+    test_timeslot = models.CharField(max_length=10)
     approved = models.BooleanField(default=False)
     denied = models.BooleanField(default=False)
 
