@@ -78,7 +78,12 @@ const MainPage = observer(() => {
           HOME
         </Button>
         {loginStore.loginSuccess ? (
-          <Button color="white" variant="link" size="lg">
+          <Button
+            color="white"
+            variant="link"
+            size="lg"
+            onClick={() => loginStore.logout()}
+          >
             로그아웃
           </Button>
         ) : (

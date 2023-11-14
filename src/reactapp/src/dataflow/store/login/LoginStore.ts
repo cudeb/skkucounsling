@@ -36,14 +36,6 @@ class LoginStore {
       })
       .onSuccess((json: any) => {
         console.log("refresh success");
-        //"json" to json object
-        if (json.user_type) {
-          if (json.user_type === "student") {
-            cookieManager.updateCookie(ACCOUNT_TYPE, "s", 1);
-          } else {
-            cookieManager.updateCookie(ACCOUNT_TYPE, "t", 1);
-          }
-        }
 
         this.loginSuccess = true;
       })
@@ -62,8 +54,16 @@ class LoginStore {
         email: email,
         password: password,
       })
-      .onSuccess((json: string) => {
+      .onSuccess((json: any) => {
         this.loginSuccess = true;
+        if (json.user_type) {
+          console.log("user type: " + json.user_type);
+          if (json.user_type === "student") {
+            cookieManager.updateCookie(ACCOUNT_TYPE, "s", 1);
+          } else {
+            cookieManager.updateCookie(ACCOUNT_TYPE, "t", 1);
+          }
+        }
       })
       .onFailed((code: number, msg?: string) => {
         console.log("login failed");
@@ -74,6 +74,12 @@ class LoginStore {
         }
       })
       .send();
+  };
+
+  logout = () => {
+    cookieManager.updateCookie(COOKIE_TOKEN, "", 1);
+    cookieManager.updateCookie(COOKIE_REFRESH, "", 1);
+    this.initStatus();
   };
 }
 
