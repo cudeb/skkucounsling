@@ -5,6 +5,7 @@ import { SIGNUP_FIELD } from "../../dataflow/store/signup/SignupStore";
 import { useNavigate } from "react-router";
 import { useEffect } from "react";
 import { sign } from "crypto";
+import { issueCSRF } from "../../dataflow/remote/RemoteInstruct";
 
 const SignupPage = observer(() => {
   const navigate = useNavigate();
@@ -19,6 +20,10 @@ const SignupPage = observer(() => {
       signupStore.signUpErrorMsg = "";
     }
   }, [signupStore.isSignUpSuccess, signupStore.signUpErrorMsg]);
+
+  useEffect(() => {
+    issueCSRF();
+  }, []);
   return (
     <VStack
       style={{

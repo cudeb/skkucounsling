@@ -7,4 +7,12 @@ const COOKIE_TOKEN = "auth_token";
 const COOKIE_REFRESH = "refresh_token";
 const CSRF_TOKEN = "csrftoken";
 
-export { RemoteSourceUrl, COOKIE_TOKEN, COOKIE_REFRESH, CSRF_TOKEN };
+const ACCOUNT_TYPE = "ACCOUNT_TYPE";
+
+export {
+  RemoteSourceUrl,
+  COOKIE_TOKEN,
+  COOKIE_REFRESH,
+  CSRF_TOKEN,
+  ACCOUNT_TYPE,
+};

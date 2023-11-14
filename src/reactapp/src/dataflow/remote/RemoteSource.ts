@@ -57,9 +57,14 @@ class Request {
 
 class RemoteSource {
   defaultHeaders = () => {
+    let token = cookieManager.readCookie(COOKIE_TOKEN);
+    if (!token || token?.trim() === "") {
+      token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjk5OTc0NzU1LCJpYXQiOjE2OTk5NjAzNTUsImp0aSI6ImVlNjQ5NDhiNjlhNjQ3Zjk5ZjlkZmMzODEwNzdiZjRlIiwidXNlcl9pZCI6Nn0.8k2os8JlcOSK3EafqL6bYsp351LM3eCZUufDYOM-UpU";
+    }
     return {
       "Content-Type": "application/json",
-      Authrization: "Bearer " + cookieManager.readCookie(COOKIE_TOKEN) || "",
+      Authorization: "Bearer  " + token,
       Refresh: cookieManager.readCookie(COOKIE_REFRESH) || "",
       "X-CSRFToken": cookieManager.readCookie(CSRF_TOKEN) || "",
     };
@@ -99,11 +104,11 @@ class RemoteSource {
       ? `${url}?${new URLSearchParams(params)}`
       : url;
 
-    console.log(
+    /* console.log(
       `Fetch Request: ${urlWithParams} ${method} ${JSON.stringify(
         headers
       )} ${JSON.stringify(body)}`
-    );
+    );*/
 
     try {
       const response = await fetch(urlWithParams, {
@@ -113,11 +118,11 @@ class RemoteSource {
         body: JSON.stringify(body), // Make sure to stringify the body if it's not FormData
       });
 
-      console.log(
+      /*  console.log(
         `Fetch Response: ${response.status} ${
           response.statusText
         } ${JSON.stringify(response.headers)}`
-      );
+      );*/
 
       this.handleCommonResponse(
         response,
@@ -135,7 +140,7 @@ class RemoteSource {
 
   handleCommonResponse = async (
     response: Response,
-    onSuccess: (json: string) => void,
+    onSuccess: (json: any) => void,
     onFailed: (code: number, msg?: string) => void
   ) => {
     if (response.status === 401) {
@@ -143,6 +148,11 @@ class RemoteSource {
       cookieManager.updateCookie(COOKIE_REFRESH, "", 1);
       loginStore.initStatus();
       onFailed(response.status, await response.text());
+      if (window.location.pathname !== "/login") {
+        window.history.pushState({}, "", "/login");
+        alert("로그인이 필요합니다.");
+        window.location.reload();
+      }
       return;
     }
 
@@ -153,9 +163,11 @@ class RemoteSource {
       }
       const json = await response.json();
       if (json.access_token) {
+        console.log("update token : ", json.access_token);
         cookieManager.updateCookie(COOKIE_TOKEN, json.access_token, 1);
       }
       if (json.refresh_token) {
+        console.log("update refresh token");
         cookieManager.updateCookie(COOKIE_REFRESH, json.refresh_token, 1);
       }
 

@@ -4,7 +4,7 @@ import { issueCSRF } from "../../remote/RemoteInstruct";
 import { cookieManager } from "../../remote/CookieManager";
 
 const SIGNUP_FIELD = {
-  NAME: "username",
+  NAME: "realname",
   EMAIL: "email",
   PASSWORD: "password1",
   CONFIRM_PASSWORD: "password2",
@@ -124,7 +124,6 @@ class SignupStore implements iSignupStore {
 
   constructor() {
     makeAutoObservable(this);
-    issueCSRF();
   }
 }
 

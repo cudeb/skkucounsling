@@ -4,6 +4,8 @@ import { observer } from "mobx-react-lite";
 import IconSkku from "../../resources/ic_skku_sg.png";
 import { useNavigate } from "react-router";
 import { loginStore } from "../../dataflow/store";
+import { cookieManager } from "../../dataflow/remote/CookieManager";
+import { ACCOUNT_TYPE } from "../../const/RemoteConst";
 const LoginPage = observer(() => {
   const navigation = useNavigate();
 
@@ -12,7 +14,9 @@ const LoginPage = observer(() => {
 
   useEffect(() => {
     if (loginStore.loginSuccess) {
-      navigation("/student/home");
+      if (cookieManager.readCookie(ACCOUNT_TYPE) === "s")
+        navigation("/student/home");
+      else navigation("/counselor/home");
     }
 
     if (loginStore.errorMsg) {

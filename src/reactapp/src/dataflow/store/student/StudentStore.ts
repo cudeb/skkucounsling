@@ -10,7 +10,7 @@ class StudentStore {
 
   fetchSchedule = () => {
     remote
-      .get("counsel/info-student/")
+      .get("counseling/info-student/")
       .onSuccess((json: string) => {
         //todo: Case the json and store in this object.
         console.log("fetch success");

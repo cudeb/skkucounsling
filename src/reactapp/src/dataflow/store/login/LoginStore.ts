@@ -1,7 +1,11 @@
 import { makeAutoObservable } from "mobx";
 import { remote } from "../../remote/RemoteSource";
 import { cookieManager } from "../../remote/CookieManager";
-import { COOKIE_REFRESH } from "../../../const/RemoteConst";
+import {
+  ACCOUNT_TYPE,
+  COOKIE_REFRESH,
+  COOKIE_TOKEN,
+} from "../../../const/RemoteConst";
 
 class LoginStore {
   errorMsg?: string = undefined;
@@ -9,11 +13,15 @@ class LoginStore {
 
   constructor() {
     makeAutoObservable(this);
+    this.initStatus();
   }
 
   initStatus = () => {
     this.errorMsg = undefined;
     this.loginSuccess = false;
+    if (cookieManager.readCookie(COOKIE_TOKEN)) {
+      this.loginSuccess = true;
+    }
   };
 
   refreshToken = () => {
@@ -26,8 +34,17 @@ class LoginStore {
       .addBody({
         refresh: refreshToken,
       })
-      .onSuccess((json: string) => {
+      .onSuccess((json: any) => {
         console.log("refresh success");
+        //"json" to json object
+        if (json.user_type) {
+          if (json.user_type === "student") {
+            cookieManager.updateCookie(ACCOUNT_TYPE, "s", 1);
+          } else {
+            cookieManager.updateCookie(ACCOUNT_TYPE, "t", 1);
+          }
+        }
+
         this.loginSuccess = true;
       })
       .onFailed((code: number, msg?: string) => {

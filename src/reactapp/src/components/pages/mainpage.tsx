@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { mainStore } from "../../dataflow/store";
+import { loginStore, mainStore } from "../../dataflow/store";
 import { Button, HStack, Text, VStack } from "@chakra-ui/react";
 import IconSkkuSg from "../../resources/ic_skku_sg.png";
 import Appbar from "../Appbar";
@@ -77,26 +77,34 @@ const MainPage = observer(() => {
         <Button color="white" variant="link" size="lg">
           HOME
         </Button>
-        <Button
-          color="white"
-          variant="link"
-          size="lg"
-          onClick={() => {
-            navigation("/signuppage");
-          }}
-        >
-          SIGNUP
-        </Button>
-        <Button
-          color="white"
-          variant="link"
-          size="lg"
-          onClick={() => {
-            navigation("/login");
-          }}
-        >
-          LOGIN
-        </Button>
+        {loginStore.loginSuccess ? (
+          <Button color="white" variant="link" size="lg">
+            로그아웃
+          </Button>
+        ) : (
+          <>
+            <Button
+              color="white"
+              variant="link"
+              size="lg"
+              onClick={() => {
+                navigation("/signuppage");
+              }}
+            >
+              SIGNUP
+            </Button>
+            <Button
+              color="white"
+              variant="link"
+              size="lg"
+              onClick={() => {
+                navigation("/login");
+              }}
+            >
+              LOGIN
+            </Button>
+          </>
+        )}
       </Appbar>
 
       <HStack
