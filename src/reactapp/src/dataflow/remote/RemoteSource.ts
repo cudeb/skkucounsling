@@ -142,6 +142,7 @@ class RemoteSource {
       cookieManager.updateCookie(COOKIE_TOKEN, "", 1);
       cookieManager.updateCookie(COOKIE_REFRESH, "", 1);
       loginStore.initStatus();
+      onFailed(response.status, await response.text());
       return;
     }
 

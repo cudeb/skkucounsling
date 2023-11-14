@@ -46,11 +46,15 @@ class LoginStore {
         password: password,
       })
       .onSuccess((json: string) => {
-        console.log("login success");
+        this.loginSuccess = true;
       })
       .onFailed((code: number, msg?: string) => {
         console.log("login failed");
-        this.errorMsg = msg;
+        if (code === 401) {
+          this.errorMsg = "계정 정보가 없습니다.";
+        } else {
+          this.errorMsg = msg;
+        }
       })
       .send();
   };

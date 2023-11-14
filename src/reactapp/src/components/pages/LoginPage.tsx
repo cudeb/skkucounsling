@@ -12,7 +12,7 @@ const LoginPage = observer(() => {
 
   useEffect(() => {
     if (loginStore.loginSuccess) {
-      navigation("/main");
+      navigation("/student/home");
     }
 
     if (loginStore.errorMsg) {
