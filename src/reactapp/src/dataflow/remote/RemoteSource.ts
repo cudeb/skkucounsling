@@ -13,6 +13,8 @@ class Request {
   headers?: Headers;
   body?: any;
   params?: [string: any];
+  type = "application/json";
+  formBody?: FormData;
 
   constructor(url: string, method: string) {
     this.url = RemoteSourceUrl.release + url;
@@ -27,8 +29,18 @@ class Request {
     return this;
   };
 
+  setType = (type: string) => {
+    this.type = type;
+    return this;
+  };
+
   addBody = (body: any) => {
     this.body = body;
+    return this;
+  };
+
+  addFormBody = (formBody: FormData) => {
+    this.formBody = formBody;
     return this;
   };
 
@@ -63,7 +75,6 @@ class RemoteSource {
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjk5OTc0NzU1LCJpYXQiOjE2OTk5NjAzNTUsImp0aSI6ImVlNjQ5NDhiNjlhNjQ3Zjk5ZjlkZmMzODEwNzdiZjRlIiwidXNlcl9pZCI6Nn0.8k2os8JlcOSK3EafqL6bYsp351LM3eCZUufDYOM-UpU";
     }
     return {
-      "Content-Type": "application/json",
       Authorization: "Bearer  " + token,
       Refresh: cookieManager.readCookie(COOKIE_REFRESH) || "",
       "X-CSRFToken": cookieManager.readCookie(CSRF_TOKEN) || "",
@@ -87,13 +98,21 @@ class RemoteSource {
   };
 
   send = async (request: Request) => {
-    let headers: { [key: string]: string } = { ...this.defaultHeaders() };
+    let headers: { [key: string]: string } = {
+      ...this.defaultHeaders(),
+    };
 
+    if (request.type && !request.formBody) {
+      headers["Content-Type"] = request.type;
+    }
+
+    console.log("default headers: ", headers);
     if (request.headers) {
       request.headers.forEach((value, key) => {
         headers[key] = value;
       });
     }
+    console.log("headers: ", headers);
 
     const body = request.body;
     const params = request.params;
@@ -115,7 +134,8 @@ class RemoteSource {
         method: method,
         credentials: "include",
         headers: headers,
-        body: JSON.stringify(body), // Make sure to stringify the body if it's not FormData
+
+        body: request.formBody || JSON.stringify(body), // Make sure to stringify the body if it's not FormData
       });
 
       /*  console.log(

@@ -88,6 +88,11 @@ class SignupStore implements iSignupStore {
       this.signUpErrorMsg = "비밀번호는 영문자를 포함해야 합니다.";
       return false;
     }
+    // password should contain at least one special character
+    if (password.search(/[~!@#$%^&*()_+|<>?:{}]/g) < 0) {
+      this.signUpErrorMsg = "비밀번호는 특수문자를 포함해야 합니다.";
+      return false;
+    }
 
     return isValid;
   };
@@ -106,13 +111,18 @@ class SignupStore implements iSignupStore {
       1
     );
 
+    const form = new FormData();
+    for (const [key, value] of Object.entries({
+      ...this.currentForm,
+      user_type: "student",
+    })) {
+      form.append(key, value);
+    }
+
     remote
       .post("signup/")
-      .addHeader("content-type", "form-data")
-      .addBody({
-        ...this.currentForm,
-        user_type: "student",
-      })
+      .setType("multipart")
+      .addFormBody(form)
       .onSuccess((json: string) => {
         this.isSignUpSuccess = true;
       })
