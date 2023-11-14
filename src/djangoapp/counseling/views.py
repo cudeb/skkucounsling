@@ -61,6 +61,10 @@ class CounselingJournalStudent(APIView):
         
         schedule_id = request.GET.get('schedule_id')
         
+        if schedule_id is None: # 요청에 schedule_id 유무 체크
+            res['error'] = "잘못된 요청입니다."
+            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)        
+        
         counseling_journals = CounselingJournals.objects.filter(counseling_schedule=schedule_id)
         res['counseling_journals'] = CounselingJournalsSerializer(counseling_journals, many=True).data
         return Response(res, status=status.HTTP_200_OK)
@@ -88,6 +92,14 @@ class CounselingApply(APIView):
         test_timeslot = request.data.get('test_timeslot')
         prefer_timeslots =  request.data.get('prefer_timeslots')
         prefer_fields = request.data.get('prefer_fields')
+        
+        # 요청에 필요한 데이터 유무 판단
+        if application_file is None or applied_at is None \
+        or counseling_type is None or test_date is None \
+        or test_timeslot is None or prefer_timeslots is None \
+        or prefer_fields is None:
+            res['error'] = "잘못된 요청입니다."
+            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
         
         # 신청서 객체 생성
         counseling_application = \
@@ -175,6 +187,10 @@ class CounselingJournalCounselor(APIView):
         
         schedule_id = request.GET.get('schedule_id')
         
+        if schedule_id is None: # 요청에 schedule_id 유무 체크
+            res['error'] = "잘못된 요청입니다."
+            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
+        
         counseling_journals = CounselingJournals.objects.get(counseling_schedule=schedule_id)
         res['counseling_journals'] = CounselingScheduleSerializer(counseling_journals).data
         
@@ -194,10 +210,18 @@ class CounselingFeedback(APIView):
         
         schedule_id = request.data.get('schedule_id')
 
+        if schedule_id is None: # 요청에 schedule_id 유무 체크 
+            res['error'] = "잘못된 요청입니다."
+            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
+            
         counseling_journals = CounselingJournals.objects.get(counseling_schedule=schedule_id)
 
         feedback = request.data.get('feedback')
 
+        if feedback is None: # 요청에 feedback 유무 체크 
+            res['error'] = "잘못된 요청입니다."
+            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
+            
         counseling_journals.feedback = feedback
         counseling_journals.save()
         return Response(res, status=status.HTTP_200_OK)
@@ -242,6 +266,11 @@ class CounselingApplicationFormalApproval(APIView):
 
         # 해당 신청서의 상담 선호 시간, 선호 분야 상담사의 상담 스케줄 불러오기
         application_id = request.GET.get('application_id')
+        
+        if application_id is None: # 요청에 application_id 유무 체크
+            res['error'] = "잘못된 요청입니다."
+            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
+        
         counseling_application = CounselingApplication.objects.get(id=application_id)
         counseling_prefertimeslots = CounselingPrefertimeslot.objects.filter(counseling_application=counseling_application)
         counseling_preferfields = CounselingPreferfield.objects.filter(counseling_application=counseling_application)
@@ -292,10 +321,20 @@ class CounselingApplicationApproval(APIView):
             res['error'] = "상담사가 아닙니다."
             return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
         
+        # 요청에서 데이터 미리 받아오기
         application_id = request.data.get('application_id')
+        test_date = request.data.get('test_date')
+        test_timeslot = request.data.get('test_timeslot')
+        session_date = request.data.get('session_date')
+        session_timeslot = request.data.get('session_timeslot')
         
-
-        #신청서 승인 상태로 바꾸기
+        # 요청에서 데이터 유무 체크
+        if application_id is None or test_date is None or test_timeslot is None \
+        or session_date is None or session_timeslot is None:
+            res['error'] = "잘못된 요청입니다."
+            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
+        
+        # 신청서 승인 상태로 바꾸기
         counseling_application = CounselingApplication.objects.get(id=application_id)
         counseling_application.approved = True
         counseling_application.save()
@@ -312,9 +351,6 @@ class CounselingApplicationApproval(APIView):
         counseling.save()
 
         # 심리검사 객체 생성
-        test_date = request.data.get('test_date')
-        test_timeslot = request.data.get('test_timeslot')
-        
         counseling_test_schedule = \
             CounselingTestSchedule(
                 counseling=counseling,
@@ -323,11 +359,6 @@ class CounselingApplicationApproval(APIView):
             )
             
         counseling_test_schedule.save()
-        
-        
-        # 상담사가 선택한 상담 날짜와 시간 받아오기
-        session_date = request.data.get('session_date')
-        session_timeslot = request.data.get('session_timeslot')
 
         # 상담 스케줄 객체 만들기 (첫 신청일때는 1개의 스케줄 생성.. 첫 상담 후에 추가/업데이트..)
         counseling_schedule = \
@@ -354,8 +385,12 @@ class CounselingApplicationDenial(APIView):
             res['error'] = "상담사가 아닙니다."
             return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
         
-
         application_id = request.data.get('application_id')
+        
+        if application_id is None: # 요청에서 application_id 유무 체크
+            res['error'] = "잘못된 요청입니다."
+            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)            
+        
         counseling_application = CounselingApplication.objects.get(id=application_id)
         counseling_application.denied = True
         counseling_application.save()
@@ -375,12 +410,18 @@ class CounselingScheduleAdd(APIView):
             res['error'] = "상담사가 아닙니다."
             return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
 
-        #상담 스케줄 객체 만들기
+        # 상담 스케줄 객체 만들기
         counseling_id = request.data.get('counseling_id')
         counseling = Counseling.objects.get(id=counseling_id)
         session_date = request.data.get('session_date')
         session_timeslot = request.data.get('session_timeslot')
         session_number = request.data.get('session_number')
+        
+        # 요청에서 데이터 유무 체크
+        if counseling_id is None or counseling is None or session_date is None \
+        or session_timeslot is None or session_number is None:
+            res['error'] = "잘못된 요청입니다."
+            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
         
         counseling_schedule = \
             CounselingSchedule(
@@ -414,6 +455,12 @@ class CounselingScheduleUpdate(APIView):
         session_number = request.data.get('session_number')
         session_status = request.data.get('session_status')
 
+        # 요청에서 데이터 유무 체크
+        if schedule_id is None or session_date is None or session_timeslot is None \
+        or session_number is None or session_status is None:
+            res['error'] = "잘못된 요청입니다."
+            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
+        
         counseling_schedule = CounselingSchedule.objects.get(id=schedule_id)
         counseling_schedule.session_date = session_date
         counseling_schedule.session_timeslot = session_timeslot
