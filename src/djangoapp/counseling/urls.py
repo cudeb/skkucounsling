@@ -8,7 +8,7 @@ app_name = 'counseling'
 urlpatterns = [
     # 학생
     path('info-student/', views.CounselingInfoStudent.as_view(), name='info-student'),
-    path('scehdule-student/', views.CounselingScheduleStudent.as_view(), name='scehdule-student'),
+    path('schedule-student/', views.CounselingScheduleStudent.as_view(), name='schedule-student'),
     path('journal-student/', views.CounselingJournalStudent.as_view(), name='journal-student'),
     path('apply/', views.CounselingApply.as_view(), name='apply'),
     # 상담사
