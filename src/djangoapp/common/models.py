@@ -5,10 +5,11 @@ from django.dispatch import receiver
 from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
-    id = models.AutoField(primary_key=True)
+    # id = models.AutoField(primary_key=True)
     user_type = models.CharField(max_length=20)
     email = models.EmailField(unique=True) # 상담사는 임의 이메일 부여하여 생성
-    username = models.CharField(max_length=20, unique=False) # 실제 이름 ex) 정승혁
+    username = models.CharField(max_length=20, unique=False) 
+    realname = models.CharField(max_length=20, unique=False, default="사용자") # 실제
     student_number =  models.CharField(max_length=20) # 학번, 상담사는 상담사 번호 부여
     phone_number = models.CharField(max_length=20) # 연락처
     birth = models.CharField(max_length=20) # 생년월일
