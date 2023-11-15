@@ -370,6 +370,13 @@ class CounselingApplicationApproval(APIView):
              )
         counseling_schedule.save()
 
+        counseling_journals = \
+            CounselingJournals(
+                counseling_schedule=counseling_schedule,
+                feedback=""
+            )
+        counseling_journals.save()
+
         return Response(status=status.HTTP_200_OK)
 
 
@@ -432,6 +439,13 @@ class CounselingScheduleAdd(APIView):
                 session_status='Yet'
             )
         counseling_schedule.save()
+
+        counseling_journals = \
+            CounselingJournals(
+                counseling_schedule=counseling_schedule,
+                feedback=""
+            )
+        counseling_journals.save()
 
         return Response(status=status.HTTP_200_OK)
     
