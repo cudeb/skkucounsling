@@ -70,14 +70,12 @@ class Request {
 class RemoteSource {
   defaultHeaders = () => {
     let token = cookieManager.readCookie(COOKIE_TOKEN);
-    if (!token || token?.trim() === "") {
-      token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjk5OTc0NzU1LCJpYXQiOjE2OTk5NjAzNTUsImp0aSI6ImVlNjQ5NDhiNjlhNjQ3Zjk5ZjlkZmMzODEwNzdiZjRlIiwidXNlcl9pZCI6Nn0.8k2os8JlcOSK3EafqL6bYsp351LM3eCZUufDYOM-UpU";
-    }
+    let refresh = cookieManager.readCookie(COOKIE_REFRESH);
+    let csrf = cookieManager.readCookie(CSRF_TOKEN);
     return {
-      Authorization: "Bearer  " + token,
-      Refresh: cookieManager.readCookie(COOKIE_REFRESH) || "",
-      "X-CSRFToken": cookieManager.readCookie(CSRF_TOKEN) || "",
+      ...(token && { Authorization: "Bearer  " + token }), // if token is not null, add Authorization header (token
+      ...(refresh && { Refresh: refresh }),
+      ...(csrf && { "X-CSRFToken": csrf }),
     };
   };
 
@@ -106,13 +104,11 @@ class RemoteSource {
       headers["Content-Type"] = request.type;
     }
 
-    console.log("default headers: ", headers);
     if (request.headers) {
       request.headers.forEach((value, key) => {
         headers[key] = value;
       });
     }
-    console.log("headers: ", headers);
 
     const body = request.body;
     const params = request.params;

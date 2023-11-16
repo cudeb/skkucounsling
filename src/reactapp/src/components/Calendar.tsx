@@ -282,3 +282,4 @@ const Calendar = ({
 };
 
 export default Calendar;
+export type { DateInfo };

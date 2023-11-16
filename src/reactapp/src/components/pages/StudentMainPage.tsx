@@ -93,6 +93,10 @@ const TaskPage = observer(() => {
 });
 
 const CalendarPage = observer(() => {
+  useEffect(() => {
+    console.log(studentStore.calendarSchedule);
+    console.log(studentStore.schedules);
+  }, [studentStore.calendarSchedule]);
   return (
     <VStack>
       <Container
@@ -101,19 +105,7 @@ const CalendarPage = observer(() => {
           marginTop: "4rem",
         }}
       >
-        <Calendar
-          dayDetails={{
-            "2023-10-19": {
-              task: "예정",
-            },
-            "2023-10-26": {
-              task: "진행",
-            },
-            "2023-10-11": {
-              task: "심리",
-            },
-          }}
-        />
+        <Calendar dayDetails={studentStore.calendarSchedule} />
       </Container>
       <HStack
         style={{
