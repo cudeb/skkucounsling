@@ -12,17 +12,7 @@ const CounselingAdminPage = () => {
 
   return (
     <VStack style={{ width: "100%" }}>
-      <Appbar>
-        <Button color="white" variant="link" size="lg">
-          HOME
-        </Button>
-        <Button color="white" variant="link" size="lg">
-          SIGNUP
-        </Button>
-        <Button color="white" variant="link" size="lg">
-          LOGOUT
-        </Button>
-      </Appbar>
+      <Appbar/>
 
       <VStack
         style={{

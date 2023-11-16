@@ -28,8 +28,8 @@ function App() {
             <Route path="/signupdone" element={<SignupDonePage />} />
             {
               // 로그인이 정상적일 경우에만 라우팅을 허용합니다.
-              true ? (
-                //loginStore.loginSuccess ? (
+              // true ? (
+              loginStore.loginSuccess ? (
                 <>
                   <Route path="/calendar" element={<CalendarTest />} />
 
@@ -38,7 +38,7 @@ function App() {
                     path="/student/application"
                     element={<StudentApplyPage />}
                   />
-                  <Route path="/admin" element={<CounselingAdminPage />} />
+                  <Route path="/admin/manageCounseling" element={<CounselingAdminPage />} />
 
                   <Route
                     path="/admin/applicationCheck"

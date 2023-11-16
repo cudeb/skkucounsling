@@ -72,6 +72,7 @@ const CalendarDate = ({
         height: "4rem",
         overflow: "hidden",
         gap: "0",
+        cursor:"pointer"
       }}
     >
       <div>
