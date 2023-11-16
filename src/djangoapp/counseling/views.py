@@ -27,7 +27,31 @@ class CounselingInfoStudent(APIView):
         res['counseling'] = CounselingSerializer(counseling, many=True).data
         return Response(res, status=status.HTTP_200_OK)
         
-            
+class CounselingApplicationStudent(APIView):
+    # 학생이 신청한 상담 신청서
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        print(user)
+        res = {}
+        if not user.is_authenticated:
+            res['error'] = "로그인이 필요합니다."
+            return Response(res, status=status.HTTP_401_UNAUTHORIZED)
+        if user.user_type != 'student':
+            res['error'] = "학생이 아닙니다."
+            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
+        
+        student = Student.objects.get(user=user)
+        counseling_application = CounselingApplication.objects.filter(student=student).values('id', 'student', 'application_file', 'applied_at', 'counseling_type', 'test_date', 'test_timeslot', 'approved', 'denied')
+        if counseling_application:
+            counseling_prefertimeslots = CounselingPrefertimeslot.objects.filter(counseling_application=counseling_application[0]['id'])
+            counseling_application[0]['counseling_prefertimeslots'] = CounselingPrefertimeslotSerializer(counseling_prefertimeslots, many=True).data
+            counseling_preferfields = CounselingPreferfield.objects.filter(counseling_application=counseling_application[0]['id'])
+            counseling_application[0]['counseling_preferfields'] = CounselingPreferfieldSerializer(counseling_preferfields, many=True).data
+            res['couseling_application'] = counseling_application[0]   
+        else:
+            res['counseling_application'] = {}
+        return Response(res,status=status.HTTP_200_OK)
+        
 class CounselingScheduleStudent(APIView):
     # 학생의 상담스케줄
     def get(self, request, *args, **kwargs):
