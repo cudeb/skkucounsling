@@ -170,14 +170,7 @@ const AdminPersonalApplicationCheckPage = observer(() => {
 
     return (
         <VStack style={{ width: "100%", paddingBottom: "10rem" }}>
-            <Appbar>
-                <Button color="white" variant="link" size="lg">
-                    HOME
-                </Button>
-                <Button color="white" variant="link" size="lg">
-                    상담 신청서 관리
-                </Button>
-            </Appbar>
+            <Appbar/>
 
             <VStack style={{ width: "85%" }}>
                 <PageDescription />

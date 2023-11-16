@@ -159,24 +159,7 @@ const StudentMainPage = observer(() => {
         width: "100%",
       }}
     >
-      <Appbar>
-        <Button
-          color="white"
-          variant="link"
-          size="lg"
-          onClick={() => navigate("/")}
-        >
-          HOME
-        </Button>
-        <Button
-          color="white"
-          variant="link"
-          size="lg"
-          onClick={() => navigate("/student/application")}
-        >
-          상담 신청
-        </Button>
-      </Appbar>
+      <Appbar/>
       <HStack
         style={{
           alignItems: "flex-start",

@@ -67,15 +67,6 @@ const SlideItem = ({
 
 const MainPage = observer(() => {
   const store = mainStore;
-  const navigation = useNavigate();
-
-  const navigateToHome = () => {
-    if (cookieManager.readCookie(ACCOUNT_TYPE) === "s") {
-      navigation("/student/home");
-    } else if (cookieManager.readCookie(ACCOUNT_TYPE) === "t") {
-      navigation("/manager");
-    }
-  };
   return (
     <VStack
       style={{
@@ -83,44 +74,7 @@ const MainPage = observer(() => {
         overflow: "hidden",
       }}
     >
-      <Appbar>
-        <Button color="white" variant="link" size="lg" onClick={navigateToHome}>
-          HOME
-        </Button>
-        {loginStore.loginSuccess ? (
-          <Button
-            color="white"
-            variant="link"
-            size="lg"
-            onClick={() => loginStore.logout()}
-          >
-            로그아웃
-          </Button>
-        ) : (
-          <>
-            <Button
-              color="white"
-              variant="link"
-              size="lg"
-              onClick={() => {
-                navigation("/signuppage");
-              }}
-            >
-              SIGNUP
-            </Button>
-            <Button
-              color="white"
-              variant="link"
-              size="lg"
-              onClick={() => {
-                navigation("/login");
-              }}
-            >
-              LOGIN
-            </Button>
-          </>
-        )}
-      </Appbar>
+      <Appbar/>
 
       <HStack
         style={{
