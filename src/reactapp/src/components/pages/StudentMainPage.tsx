@@ -5,8 +5,10 @@ import Calendar from "../Calendar";
 import IconDocument from "../../resources/calendar/icon_document.png";
 import IconCheck from "../../resources/calendar/icon_check.png";
 import IconClick from "../../resources/calendar/icon_click.png";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { studentStore } from "../../dataflow/store/student/StudentStore";
+import { useNavigate } from "react-router";
+import StudentCounselInfoModal from "../modals/StudentCounselInfoModal";
 
 const TaskAttendancyOerview = observer(() => {
   return (
@@ -93,10 +95,6 @@ const TaskPage = observer(() => {
 });
 
 const CalendarPage = observer(() => {
-  useEffect(() => {
-    console.log(studentStore.calendarSchedule);
-    console.log(studentStore.schedules);
-  }, [studentStore.calendarSchedule]);
   return (
     <VStack>
       <Container
@@ -105,7 +103,12 @@ const CalendarPage = observer(() => {
           marginTop: "4rem",
         }}
       >
-        <Calendar dayDetails={studentStore.calendarSchedule} />
+        <Calendar
+          dayDetails={studentStore.calendarSchedule}
+          onClickDate={(year, month, date) => {
+            studentStore.setMainModalSchedule([year, month, date]);
+          }}
+        />
       </Container>
       <HStack
         style={{
@@ -137,9 +140,18 @@ const CalendarPage = observer(() => {
 });
 
 const StudentMainPage = observer(() => {
+  const navigate = useNavigate();
   useEffect(() => {
     studentStore.fetchSchedule();
   }, []);
+
+  const [isModalOpen, openModal] = useState(false);
+
+  useEffect(() => {
+    if (studentStore.mainModalSchedule) {
+      openModal(true);
+    }
+  }, [studentStore.mainModalSchedule]);
 
   return (
     <VStack
@@ -148,10 +160,20 @@ const StudentMainPage = observer(() => {
       }}
     >
       <Appbar>
-        <Button color="white" variant="link" size="lg">
+        <Button
+          color="white"
+          variant="link"
+          size="lg"
+          onClick={() => navigate("/")}
+        >
           HOME
         </Button>
-        <Button color="white" variant="link" size="lg">
+        <Button
+          color="white"
+          variant="link"
+          size="lg"
+          onClick={() => navigate("/student/application")}
+        >
           상담 신청
         </Button>
       </Appbar>
@@ -164,6 +186,18 @@ const StudentMainPage = observer(() => {
         <TaskPage />
         <CalendarPage />
       </HStack>
+      <StudentCounselInfoModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          studentStore.setMainModalSchedule(null);
+          openModal(false);
+        }}
+        counsel={studentStore.mainModalSchedule}
+        time={studentStore.mainModalScheduleDate}
+        onSave={function (memo: string): void {
+          //throw new Error("Function not implemented.");
+        }}
+      />
     </VStack>
   );
 });

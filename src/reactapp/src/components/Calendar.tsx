@@ -176,8 +176,8 @@ const Calendar = ({
       setYear(dateItem.year);
       setMonth(dateItem.month);
       setDate(dateItem.day);
-      onClickDate?.(dateItem.year, dateItem.month, dateItem.day);
     }
+    onClickDate?.(dateItem.year, dateItem.month, dateItem.day);
   };
 
   const getDayDetail = (year: number, month: number, date: number) => {

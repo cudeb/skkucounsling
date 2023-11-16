@@ -10,6 +10,8 @@ import IcTasks from "../../resources/mainpage/ic_tasks.png";
 import IcCounseling from "../../resources/mainpage/ic_counseling.png";
 import IcDocument from "../../resources/mainpage/ic_document.png";
 import { useNavigate } from "react-router";
+import { cookieManager } from "../../dataflow/remote/CookieManager";
+import { ACCOUNT_TYPE } from "../../const/RemoteConst";
 
 const SlideItem = ({
   image,
@@ -66,6 +68,14 @@ const SlideItem = ({
 const MainPage = observer(() => {
   const store = mainStore;
   const navigation = useNavigate();
+
+  const navigateToHome = () => {
+    if (cookieManager.readCookie(ACCOUNT_TYPE) === "s") {
+      navigation("/student/home");
+    } else if (cookieManager.readCookie(ACCOUNT_TYPE) === "t") {
+      navigation("/manager");
+    }
+  };
   return (
     <VStack
       style={{
@@ -74,7 +84,7 @@ const MainPage = observer(() => {
       }}
     >
       <Appbar>
-        <Button color="white" variant="link" size="lg">
+        <Button color="white" variant="link" size="lg" onClick={navigateToHome}>
           HOME
         </Button>
         {loginStore.loginSuccess ? (
