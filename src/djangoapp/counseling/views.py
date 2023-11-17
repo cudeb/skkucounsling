@@ -215,8 +215,9 @@ class CounselingJournalCounselor(APIView):
             res['error'] = "잘못된 요청입니다."
             return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
         
-        counseling_journals = CounselingJournals.objects.get(counseling_schedule=schedule_id)
-        res['counseling_journals'] = CounselingScheduleSerializer(counseling_journals).data
+        counseling_schedule = CounselingSchedule.objects.get(id=schedule_id)
+        counseling_journals = CounselingJournals.objects.get(counseling_schedule=counseling_schedule)
+        res['counseling_journals'] = CounselingJournalsSerializer(counseling_journals).data
         
         return Response(res, status=status.HTTP_200_OK)
     
