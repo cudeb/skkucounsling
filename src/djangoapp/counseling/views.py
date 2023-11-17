@@ -321,7 +321,7 @@ class CounselingApplicationFormalApproval(APIView):
                 # 해당 날짜/시간에 상담사의 상담 일정이 없으면 추천, 있으면 패스
                 check = False 
                 for counseling_schedule in counseling_schedules:
-                    if counseling_schedule.session_date.date() == date.date():
+                    if counseling_schedule.session_date == date.date():
                         if counseling_schedule.session_timeslot[3:] == time:
                             check = True
                             break
