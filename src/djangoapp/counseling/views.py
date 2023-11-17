@@ -41,15 +41,15 @@ class CounselingApplicationStudent(APIView):
             return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
         
         student = Student.objects.get(user=user)
-        counseling_application = CounselingApplication.objects.filter(student=student).values('id', 'student', 'application_file', 'applied_at', 'counseling_type', 'test_date', 'test_timeslot', 'approved', 'denied')
-        if counseling_application:
-            counseling_prefertimeslots = CounselingPrefertimeslot.objects.filter(counseling_application=counseling_application[0]['id'])
-            counseling_application[0]['counseling_prefertimeslots'] = CounselingPrefertimeslotSerializer(counseling_prefertimeslots, many=True).data
-            counseling_preferfields = CounselingPreferfield.objects.filter(counseling_application=counseling_application[0]['id'])
-            counseling_application[0]['counseling_preferfields'] = CounselingPreferfieldSerializer(counseling_preferfields, many=True).data
-            res['couseling_application'] = counseling_application[0]   
-        else:
-            res['counseling_application'] = {}
+        counseling_applications = CounselingApplication.objects.filter(student=student).values('id', 'student', 'application_file', 'applied_at', 'counseling_type', 'test_date', 'test_timeslot', 'approved', 'denied')
+        for counseling_application in counseling_applications:
+            counseling_prefertimeslots = CounselingPrefertimeslot.objects.filter(counseling_application=counseling_application['id'])
+            counseling_application['counseling_prefertimeslots'] = CounselingPrefertimeslotSerializer(counseling_prefertimeslots, many=True).data
+            counseling_preferfields = CounselingPreferfield.objects.filter(counseling_application=counseling_application['id'])
+            counseling_application['counseling_preferfields'] = CounselingPreferfieldSerializer(counseling_preferfields, many=True).data
+        
+        res['couseling_application'] = counseling_applications
+
         return Response(res,status=status.HTTP_200_OK)
         
 class CounselingScheduleStudent(APIView):
