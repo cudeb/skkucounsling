@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Counseling, CounselingApplication, CounselingJournals, CounselingPrefertimeslot, CounselingSchedule, CounselingTestSchedule, CounselingPreferfield
 from common.models import User, Student, Counselor
+from common.serializers import StudentSerializer
 from .serializers import CounselingApplicationSerializer, CounselingScheduleSerializer, CounselingJournalsSerializer, CounselingSerializer, CounselingPreferfieldSerializer, CounselingPrefertimeslotSerializer
 import datetime
 # Create your views here.
@@ -260,13 +261,15 @@ class CounselingApplications(APIView):
         if not user.is_authenticated:
             res['error'] = "로그인이 필요합니다."
             return Response(res, status=status.HTTP_401_UNAUTHORIZED)
-        #if user.user_type != 'counselor':
-        #    res['error'] = "상담사가 아닙니다."
-        #    return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
+        if user.user_type != 'counselor':
+           res['error'] = "상담사가 아닙니다."
+           return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
+       
         counseling_applications = CounselingApplication.objects.all().values('id', 'student', 'application_file', 'applied_at', 'counseling_type', 'test_date', 'test_timeslot', 'approved', 'denied')
 
         for counseling_application in counseling_applications:
-
+            student = Student.objects.get(id=counseling_application['student'])
+            counseling_application['student'] = StudentSerializer(student).data
             counseling_prefertimeslots = CounselingPrefertimeslot.objects.filter(counseling_application=counseling_application['id'])
             counseling_application['counseling_prefertimeslots'] = CounselingPrefertimeslotSerializer(counseling_prefertimeslots, many=True).data
             counseling_preferfields = CounselingPreferfield.objects.filter(counseling_application=counseling_application['id'])
