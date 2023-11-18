@@ -1,14 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Appbar from "../../Appbar";
 import AdminMain from "./AdminMode/AdminMain";
 import AdminDetail from "./AdminMode/AdminDetail";
-import { Button, Text, VStack, Flex, Spacer } from "@chakra-ui/react";
+import { counselorStore } from "../../../dataflow/store/counselor/CounselorStore";
+import { Text, VStack, Flex, Spacer } from "@chakra-ui/react";
 
 const CounselingAdminPage = () => {
   const [isMainMode, setIsMainMode] = useState<boolean>(true);
   const [selectedId, setSelectedId] = useState<string>("");
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [searchName, setSearchName] = useState<string>("");
+
+  useEffect(() => {
+    counselorStore.fetchInfo();
+    counselorStore.fetchSchedule();
+  }, []);
 
   return (
     <VStack style={{ width: "100%" }}>
