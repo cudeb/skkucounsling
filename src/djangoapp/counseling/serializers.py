@@ -3,7 +3,7 @@ from . import models
 from common.serializers import StudentSerializer, CounselorSerializer
 
 class CounselingApplicationSerializer(serializers.ModelSerializer):
-    
+    student = StudentSerializer()
     class Meta:
         model = models.CounselingApplication
         fields = (
