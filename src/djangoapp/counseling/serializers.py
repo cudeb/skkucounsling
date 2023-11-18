@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from . import models
-
+from common.serializers import StudentSerializer, CounselorSerializer
 
 class CounselingApplicationSerializer(serializers.ModelSerializer):
     
@@ -17,6 +17,8 @@ class CounselingApplicationSerializer(serializers.ModelSerializer):
 
 class CounselingSerializer(serializers.ModelSerializer):
     counseling_application = CounselingApplicationSerializer()
+    student = StudentSerializer()
+    counselor = CounselorSerializer()
     class Meta:
         model = models.Counseling
         fields = (
