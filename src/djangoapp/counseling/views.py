@@ -49,7 +49,7 @@ class CounselingApplicationStudent(APIView):
             counseling_preferfields = CounselingPreferfield.objects.filter(counseling_application=counseling_application['id'])
             counseling_application['counseling_preferfields'] = CounselingPreferfieldSerializer(counseling_preferfields, many=True).data
         
-        res['couseling_application'] = counseling_applications
+        res['counseling_applications'] = counseling_applications
 
         return Response(res,status=status.HTTP_200_OK)
         
