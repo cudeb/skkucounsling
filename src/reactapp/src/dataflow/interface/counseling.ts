@@ -21,3 +21,27 @@ export type ICounselingSchedule = {
   session_timeslot: string,
   session_status: string,
 };
+
+export interface IApplicationForm {
+  id: number;
+  student: number;
+  application_file: File | null;
+  applied_at: string;
+  approved: boolean;
+  denied: boolean;
+  counseling_preferfields: Array<IPreferFields>;
+  counseling_prefertimeslots: Array<IPreferTimeslots>;
+  counseling_type: string;
+  test_date: string;
+  test_timeslot: string;
+}
+
+export interface IPreferFields {
+  id: number;
+  field: string;
+}
+
+export interface IPreferTimeslots {
+  id: number;
+  timeslot: string;
+}

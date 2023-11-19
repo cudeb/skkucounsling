@@ -12,6 +12,8 @@ import { loginStore } from "./dataflow/store";
 import CounselingAdminPage from "./components/pages/CounselingAdminPage/CounselingAdminPage";
 import AdminApplicationCheckPage from "./components/pages/AdminApplicationCheckPage";
 import AdminPersonalApplicationCheckPage from "./components/pages/AdminPersonalApplicationCheckPage";
+import StudentApplicationCheckPage from "./components/pages/StudentApplicationCheckPage";
+import CounselorMainPage from "./components/pages/CounselorMainPage";
 
 function App() {
   return (
@@ -38,8 +40,16 @@ function App() {
                     path="/student/application"
                     element={<StudentApplyPage />}
                   />
+                  <Route
+                    path="/student/applicationCheck"
+                    element={<StudentApplicationCheckPage />}
+                  />
                   <Route path="/admin/manageCounseling" element={<CounselingAdminPage />} />
 
+                  <Route
+                    path="/admin/home"
+                    element={<CounselorMainPage />}
+                  />
                   <Route
                     path="/admin/applicationCheck"
                     element={<AdminApplicationCheckPage />}

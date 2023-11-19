@@ -16,7 +16,7 @@ const LoginPage = observer(() => {
     if (loginStore.loginSuccess) {
       if (cookieManager.readCookie(ACCOUNT_TYPE) === "s")
         navigation("/student/home");
-      else navigation("/counselor/home");
+      else navigation("/admin/home");
     }
 
     if (loginStore.errorMsg) {
