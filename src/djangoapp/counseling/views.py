@@ -139,6 +139,7 @@ class CounselingApply(APIView):
         
         counseling_application.save()
         
+        prefer_timeslots = prefer_timeslots.split(',')
         # 타임슬롯 지정
         for timeslot in prefer_timeslots:
             counseling_prefer_timeslot = \
@@ -149,6 +150,7 @@ class CounselingApply(APIView):
             counseling_prefer_timeslot.save()
 
         # 상담분야 지정
+        prefer_fields = prefer_fields.split(',')
         for field in prefer_fields:
             counseling_prefer_field = \
                 CounselingPreferfield(
