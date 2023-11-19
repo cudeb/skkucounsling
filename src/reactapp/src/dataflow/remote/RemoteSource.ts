@@ -12,7 +12,7 @@ class Request {
   method: string;
   headers?: Headers;
   body?: any;
-  params?: [string: any];
+  params?: { [key: string]: any };
   type = "application/json";
   formBody?: FormData;
 
@@ -44,7 +44,7 @@ class Request {
     return this;
   };
 
-  addParams = (params: [string: any]) => {
+  addParams = (params: { [key: string]: any }) => {
     this.params = params;
     return this;
   };
@@ -116,7 +116,7 @@ class RemoteSource {
     const method = request.method;
 
     const urlWithParams = params
-      ? `${url}?${new URLSearchParams(params)}`
+      ? `${url}?${new URLSearchParams(params)}`.replace("/?", "?")
       : url;
 
     /* console.log(
@@ -179,11 +179,9 @@ class RemoteSource {
       }
       const json = await response.json();
       if (json.access_token) {
-        console.log("update token : ", json.access_token);
         cookieManager.updateCookie(COOKIE_TOKEN, json.access_token, 1);
       }
       if (json.refresh_token) {
-        console.log("update refresh token");
         cookieManager.updateCookie(COOKIE_REFRESH, json.refresh_token, 1);
       }
 
