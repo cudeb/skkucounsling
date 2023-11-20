@@ -65,10 +65,11 @@ class CounselingScheduleStudent(APIView):
             res['error'] = "학생이 아닙니다."
             return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
         
-        
         student = Student.objects.get(user=user)
+        test_schedule = CounselingApplication.objects.filter(student=student).values('test_date', 'test_timeslot')
         counseling_schedule = CounselingSchedule.objects.filter(counseling__student=student)
         res['counseling_schedule'] = CounselingScheduleSerializer(counseling_schedule, many=True).data
+        res['test_schedule'] = test_schedule
         return Response(res, status=status.HTTP_200_OK)
 
     
