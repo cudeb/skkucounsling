@@ -6,6 +6,30 @@ import { ICounselingApplicationDetail } from "../../interface/counselingApplicat
 class CounselorApplicationStore {
   counselingApplications: ICounselingApplicationDetail[] = [];
 
+  applicationApproval: {
+    application_id: number;
+    session_date: string;
+    session_timeslot: string;
+  } = {
+    application_id: 0,
+    session_date: "",
+    session_timeslot: "",
+  };
+
+  fetchApplicationApproval = () => {
+    remote
+      .post("counseling/application-approval/")
+      .addBody(this.applicationApproval)
+      .onSuccess((json: any) => {
+        console.log(json);
+      })
+      .onFailed((code: number, msg?: string) => {
+        console.log(code);
+        if (msg) console.log(msg);
+      })
+      .send();
+  };
+
   currentApplication: ICounselingApplicationDetail = {
     id: 0,
     student: {
@@ -18,7 +42,7 @@ class CounselorApplicationStore {
         student_number: "",
         user_type: "",
         username: "",
-        email: ""
+        email: "",
       },
     },
     application_file: "",
@@ -92,17 +116,18 @@ class CounselorApplicationStore {
               !application.denied && !application.approved
           );
 
-        let filteredByType:ICounselingApplicationDetail[]=couselingApplications;
-        if(counselType!==""){
+        let filteredByType: ICounselingApplicationDetail[] =
+          couselingApplications;
+        if (counselType !== "") {
           console.log("type filter");
           filteredByType = couselingApplications.filter(
             (application: ICounselingApplicationDetail) =>
               application.counseling_type === counselType
           );
-        };
-        
-        let filteredByField:ICounselingApplicationDetail[]=filteredByType;
-        if(counselField!==""){
+        }
+
+        let filteredByField: ICounselingApplicationDetail[] = filteredByType;
+        if (counselField !== "") {
           console.log("field filter");
           filteredByField = filteredByType.filter(
             (application: ICounselingApplicationDetail) =>
@@ -112,8 +137,9 @@ class CounselorApplicationStore {
           );
         }
 
-        let filteredByTimeSlot:ICounselingApplicationDetail[]=filteredByField;
-        if (desiredDay!=="" && desiredTime!==""){
+        let filteredByTimeSlot: ICounselingApplicationDetail[] =
+          filteredByField;
+        if (desiredDay !== "" && desiredTime !== "") {
           console.log("day filter");
           const desiredDayAndTime: string = desiredDay + desiredTime;
           filteredByTimeSlot = filteredByField.filter(
@@ -146,6 +172,7 @@ class CounselorApplicationStore {
               application.id == applicationId
           );
         this.currentApplication = currentApplication[0];
+        this.applicationApproval.application_id = applicationId;
         console.log(currentApplication);
       })
       .onFailed((code: number, msg?: string) => {
