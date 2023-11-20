@@ -30,7 +30,8 @@ class CounselingSerializer(serializers.ModelSerializer):
         
         
 class CounselingScheduleSerializer(serializers.ModelSerializer):
-    
+    #I want to get the student and counselor information from the counseling table
+    counseling = CounselingSerializer()
     class Meta:
         model = models.CounselingSchedule
         fields = (
