@@ -58,16 +58,16 @@ const AdminPersonalApplicationCheckPage = observer(() => {
         setIsRefuseModalOpen(false);
     };
 
-    
+
     // 신청서 양식 다운로드
     const handleDownload = (path: string, saveName: string) => {
         // 파일을 읽어오는 동기 함수
         console.log(counselorApplicationStore.currentApplication.application_file)
         const loadFile = (url: string) => {
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', url, false);
-        xhr.send();
-        return xhr.response;
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', url, false);
+            xhr.send();
+            return xhr.response;
         };
 
         // docx 파일 읽기
@@ -116,10 +116,10 @@ const AdminPersonalApplicationCheckPage = observer(() => {
             <VStack style={{ alignItems: "center", padding: "2rem", width: "20%", backgroundColor: "white", marginRight: "5%" }}>
                 <img src="https://www.pngarts.com/files/10/Default-Profile-Picture-PNG-Download-Image.png" ></img>
                 <Text marginTop={5} fontSize="l" fontWeight="600">{counselorApplicationStore.currentApplication.student.user.username}</Text>
-                <Button onClick={() => handleDownload('../../../../djangoapp/'+counselorApplicationStore.currentApplication.application_file,
-                counselorApplicationStore.currentApplication.application_file)} 
-                size='sm' leftIcon={<DownloadIcon />} 
-                style={{ backgroundColor: "#D9D9D9" }}>
+                <Button onClick={() => handleDownload('../../../../djangoapp/' + counselorApplicationStore.currentApplication.application_file,
+                    counselorApplicationStore.currentApplication.application_file)}
+                    size='sm' leftIcon={<DownloadIcon />}
+                    style={{ backgroundColor: "#D9D9D9" }}>
                     신청서 다운로드
                 </Button>
             </VStack>
@@ -143,9 +143,8 @@ const AdminPersonalApplicationCheckPage = observer(() => {
                 </HStack>
                 <VStack style={{ alignItems: "flex-start" }}>
                     <Text marginTop={3} fontSize="large" fontWeight="800" marginRight={3}>상담 학생 정보</Text>
-                    <Text marginTop={1} fontSize="smaller" fontWeight="600">이름 : {counselorApplicationStore.currentApplication.student.user.username}</Text>
+                    <Text marginTop={1} fontSize="smaller" fontWeight="600">이름 : {counselorApplicationStore.currentApplication.student.user.realname}</Text>
                     <Text marginTop={1} fontSize="smaller" fontWeight="600">학번 : {counselorApplicationStore.currentApplication.student.user.student_number}</Text>
-                    {/* 학년과 이메일 정보가 API에 없어서 구현 불가. */}
                     <Text marginTop={1} fontSize="smaller" fontWeight="600">이메일 : {counselorApplicationStore.currentApplication.student.user.email}</Text>
                     <Text marginTop={1} fontSize="smaller" fontWeight="600">생년월일 : {counselorApplicationStore.currentApplication.student.user.birth}</Text>
                     <Text marginTop={1} fontSize="smaller" fontWeight="600">연락처 : {counselorApplicationStore.currentApplication.student.user.phone_number}</Text>

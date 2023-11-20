@@ -60,6 +60,13 @@ const AdminApplicationCheckPage = observer(() => {
   const [desiredDay, setDesiredDay] = useState('');
   const [desiredTime, setDesiredTime] = useState('');
 
+  function setAllSelectDefault() {
+    setCounselType("");
+    setCounselField("");
+    setDesiredDay("");
+    setDesiredDay("");
+  }
+
 
   useEffect(() => {
     counselorApplicationStore.fetchUnprocessedCouselingApplications();
@@ -69,7 +76,7 @@ const AdminApplicationCheckPage = observer(() => {
   const handleApplyFilter = () => {
 
     // 희망상담 요일, 시간 둘중 하나만 골랐을 때 때 alert 표시
-    if ( (!desiredDay && desiredTime) || (desiredDay && !desiredTime)) {
+    if ((!desiredDay && desiredTime) || (desiredDay && !desiredTime)) {
       alert('상담 요일과 날짜로 필터링을 진행할 경우, 두 가지 모두 선택해주세요.');
       return; // 필터링을 진행하지 않음
     }
@@ -105,6 +112,7 @@ const AdminApplicationCheckPage = observer(() => {
             alignItems: "flex-start",
             padding: "2rem",
             width: "25%",
+            height: "556px",
             backgroundColor: "lightgray",
             marginRight: "2%",
           }}
@@ -117,7 +125,7 @@ const AdminApplicationCheckPage = observer(() => {
               Apply
             </Button>
             <Button
-              onClick={() => console.log("임시")}
+              onClick={() => setAllSelectDefault()}
               size="sm"
               colorScheme="green"
             >
@@ -166,43 +174,50 @@ const AdminApplicationCheckPage = observer(() => {
     );
   });
 
+
+  const CounselingTableHeader = observer(() => {
+    return (
+      <Table variant="simple">
+        <Thead>
+          <Tr>
+            {[
+              "고유 번호",
+              "학생 이름",
+              "학생 학번",
+              "신청 일시",
+              "상담 종류",
+              "관리하기",
+            ].map((item, index) => {
+              return (
+                <Th key={index} bgColor="gray.800" color="white">
+                  {item}
+                </Th>
+              );
+            })}
+          </Tr>
+        </Thead>
+      </Table >
+    )
+  })
+
   const CounselingTable = observer(() => {
     return (
-      <TableContainer>
-        <Table variant="simple">
-          <Thead>
-            <Tr>
-              {[
-                "고유 번호",
-                "학생 이름",
-                "학생 학번",
-                "신청 일시",
-                "상담 종류",
-                "관리하기",
-              ].map((item, index) => {
-                return (
-                  <Th key={index} bgColor="gray.800" color="white">
-                    {item}
-                  </Th>
-                );
-              })}
-            </Tr>
-          </Thead>
+      <TableContainer style={{ overflowY: 'auto', maxHeight: '515px' }}>
+        <Table>
           <Tbody>
-            {/* 이 부분에 데이터가 유동적으로 바꾸어야 합니다. */}
-            {counselorApplicationStore.counselingApplications.length===0?(
+            {counselorApplicationStore.counselingApplications.length === 0 ? (
               <Text>신청서가 존재하지 않습니다.</Text>
-            ):(
+            ) : (
               counselorApplicationStore.counselingApplications.map(application => (
-                <Tr bgColor="gray.100" >
+                <Tr bgColor="gray.100">
                   <Td>{application.id}</Td>
-                  <Td>{application.student.user.username}</Td>
+                  <Td>{application.student.user.realname}</Td>
                   <Td>{application.student.user.student_number}</Td>
                   <Td>{getAppliedAt(application.applied_at)}</Td>
                   <Td>{getCounselingType(application.counseling_type)}</Td>
                   <Td>
                     <Link to={`/admin/personalApplicationCheck/${application.id}`}>
-                      < Button
+                      <Button
                         color="white"
                         padding="10%"
                         fontSize="0.7rem"
@@ -215,10 +230,10 @@ const AdminApplicationCheckPage = observer(() => {
                     </Link>
                   </Td>
                 </Tr>
-              )))
-            }
-          </Tbody >
-        </Table >
+              ))
+            )}
+          </Tbody>
+        </Table>
       </TableContainer >
     );
   });
@@ -231,7 +246,10 @@ const AdminApplicationCheckPage = observer(() => {
         <PageDescription />
         <HStack align="flex-start" style={{ width: "100%" }}>
           <FilteringField />
-          <CounselingTable />
+          <VStack style={{ columnGap: "0", rowGap: "0" }}>
+            <CounselingTableHeader />
+            <CounselingTable />
+          </VStack>
         </HStack>
       </VStack>
     </VStack>
