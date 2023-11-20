@@ -39,9 +39,6 @@ const FeedbackTable: FC<FeedbackTableProps> = ({
             <Th style={tableHeadStyle}>
               <Center w="20rem" fontSize="sm">피드백 내용</Center>
             </Th>
-            <Th style={tableHeadStyle}>
-              <Center w="7rem" fontSize="sm">이행 여부</Center>
-            </Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -55,11 +52,6 @@ const FeedbackTable: FC<FeedbackTableProps> = ({
               <Td style={tableBodyStyle}>
                 <Center w="20rem" fontSize="sm">
                   {feedback.length > 25 ? `${feedback.slice(0, 25)}...` : feedback}
-                </Center>
-              </Td>
-              <Td style={tableBodyStyle}>
-                <Center w="7rem" fontSize="sm">
-                  X
                 </Center>
               </Td>
             </Tr>

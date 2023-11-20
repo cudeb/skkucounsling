@@ -39,7 +39,7 @@ class CounselorStore {
     remote
       .get("counseling/applications/")
       .onSuccess((json: any) => {
-        const detailInfo = json.couseling_applications;
+        const detailInfo = json.counseling_applications;
         this.detailInfo = detailInfo;
         if (this.afterSuccessCallbackDetail) {
           this.afterSuccessCallbackDetail();
