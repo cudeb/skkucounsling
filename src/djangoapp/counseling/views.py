@@ -66,9 +66,11 @@ class CounselingScheduleStudent(APIView):
             return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
         
         student = Student.objects.get(user=user)
+        counseling_type = CounselingApplication.objects.filter(student=student).values('counseling_type')
         test_schedule = CounselingApplication.objects.filter(student=student).values('test_date', 'test_timeslot')
         counseling_schedule = CounselingSchedule.objects.filter(counseling__student=student)
         res['counseling_schedule'] = CounselingScheduleSerializer(counseling_schedule, many=True).data
+        res['counseling_type'] = counseling_type
         res['test_schedule'] = test_schedule
         res['start_schedule'] = CounselingScheduleSerializer(counseling_schedule.first()).data
         res['last_schedule'] = CounselingScheduleSerializer(counseling_schedule.last()).data
