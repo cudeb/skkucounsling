@@ -280,10 +280,10 @@ const PageDescription = observer(() => {
         <HStack style={{ alignItems: "center", backgroundColor:"white"}}>
           <Button 
           onClick={() => handleDownload('../../resources/application/Counseling_Sincheong_File.docx','Counseling_Sincheong_File.docx')} 
-          size='sm' leftIcon={<DownloadIcon />} colorScheme="green">신청서 양식 다운로드(.hwp)</Button>
+          size='sm' leftIcon={<DownloadIcon />} colorScheme="green">신청서 양식 다운로드(.docx)</Button>
           <Button 
           onClick={() => handleDownload('../../resources/application/Counseling_Sincheong_File.hwp','Counseling_Sincheong_File.hwp')} 
-          size='sm' leftIcon={<DownloadIcon />} colorScheme="green">신청서 양식 다운로드(.docx)</Button>
+          size='sm' leftIcon={<DownloadIcon />} colorScheme="green">신청서 양식 다운로드(.hwp)</Button>
         </HStack>
         
         <label htmlFor="application" style={{width:"90%", border: "solid 1px gray", borderRadius: "7px"}}>
