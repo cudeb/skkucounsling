@@ -46,7 +46,7 @@ export type ICounselingTestSchedule = {
 export interface IApplicationForm {
   id: number;
   student: number;
-  application_file: File | null;
+  application_file: string;
   applied_at: string;
   approved: boolean;
   denied: boolean;

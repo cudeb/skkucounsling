@@ -21,7 +21,7 @@ class CounselorApplicationStore {
         email: ""
       },
     },
-    application_file: null,
+    application_file: "",
     applied_at: "",
     counseling_type: "",
     test_date: "",

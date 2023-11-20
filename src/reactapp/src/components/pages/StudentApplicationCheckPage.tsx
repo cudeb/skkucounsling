@@ -15,7 +15,7 @@ const StudentApplyPage = observer(() => {
 
   const [type, setType] = useState('personal_1');
   const [fields, setFields] = useState<(string|number)[]>([]);
-  const [file, setFile] = useState<File|null>(); 
+  const [file, setFile] = useState(""); 
   const [times, setTimes] = useState<(string|number)[]>([]);
   const [testTime, setTestTime] = useState('10');
   const [testYear, setTestYear] = useState("");
@@ -88,23 +88,23 @@ const StudentApplyPage = observer(() => {
   }
 
   // 신청서 양식 다운로드
-  const handleDownload = () => {
-    // try {
-  
-    //   // Blob 데이터를 File 객체로 변환
-    //   const file_ = new File(file, 'file.docx', { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-  
-    //   // 파일 다운로드
-    //   const url = window.URL.createObjectURL(file_);
-    //   const a = document.createElement('a');
-    //   a.href = url;
-    //   a.download = 'file.docx';
-    //   document.body.appendChild(a);
-    //   a.click();
-    //   document.body.removeChild(a);
-    // } catch (error) {
-    //   console.error('Error downloading file:', error);
-    // }
+  const handleDownload = (path: string, saveName: string) => {
+    // 파일을 읽어오는 동기 함수
+    const loadFile = (url: string) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', url, false);
+      xhr.send();
+      return xhr.response;
+    };
+
+    // docx 파일 읽기
+    const docxContent = loadFile(path);
+
+    // Blob으로 변환
+    const blob = new Blob([docxContent], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+
+    // 다운로드
+    saveAs(blob, saveName);
   };
   
 const PageDescription = observer(() => {
@@ -217,8 +217,8 @@ const PageDescription = observer(() => {
       <VStack style={{ alignItems: "flex-start", padding: "2rem", width:"100%"}}>
         <Text fontSize="xl" fontWeight="600">제출한 신청서 다운로드</Text>
         <Button 
-          onClick={handleDownload} 
-          size='sm' leftIcon={<DownloadIcon />} colorScheme="green">신청서 다운로드
+          onClick={() => handleDownload('../../../../djangoapp/'+file,file)}
+          size='sm' leftIcon={<DownloadIcon />} colorScheme="green" style={{margin:"1rem"}}>신청서 다운로드
         </Button>
       </VStack>
     );
@@ -234,7 +234,7 @@ const PageDescription = observer(() => {
         <CounselingType/>
         <CounselingField/>
         <CounselingTime/>
-        {/* <FormDownloader/> */}
+        <FormDownloader/>
       </VStack>
     </VStack>
   );

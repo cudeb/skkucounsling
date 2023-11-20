@@ -2,12 +2,12 @@ import { Button, HStack, Text, VStack, ChakraProvider } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
 import Appbar from "../Appbar";
 import { Table, Thead, Tbody, Tr, Th, Td, TableContainer } from '@chakra-ui/react'
-import { Children, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { saveAs } from 'file-saver';
 import AcceptModal from "./AcceptModal";
 import RefuseModal from "./RefuseModal";
 import { counselorApplicationStore } from "../../dataflow/store/counselor/CounselorApplicationStore"
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import { DownloadIcon } from '@chakra-ui/icons'
 
 const AdminPersonalApplicationCheckPage = observer(() => {
 
@@ -58,6 +58,28 @@ const AdminPersonalApplicationCheckPage = observer(() => {
         setIsRefuseModalOpen(false);
     };
 
+    
+    // 신청서 양식 다운로드
+    const handleDownload = (path: string, saveName: string) => {
+        // 파일을 읽어오는 동기 함수
+        console.log(counselorApplicationStore.currentApplication.application_file)
+        const loadFile = (url: string) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', url, false);
+        xhr.send();
+        return xhr.response;
+        };
+
+        // docx 파일 읽기
+        const docxContent = loadFile(path);
+
+        // Blob으로 변환
+        const blob = new Blob([docxContent], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+
+        // 다운로드
+        saveAs(blob, saveName);
+    };
+
     // 해당 웹페이지의 주소값에서 id를 추출하는 함수
     function extractIdFromUrl(): number {
         const currentUrl: string = window.location.href;
@@ -94,9 +116,10 @@ const AdminPersonalApplicationCheckPage = observer(() => {
             <VStack style={{ alignItems: "center", padding: "2rem", width: "20%", backgroundColor: "white", marginRight: "5%" }}>
                 <img src="https://www.pngarts.com/files/10/Default-Profile-Picture-PNG-Download-Image.png" ></img>
                 <Text marginTop={5} fontSize="l" fontWeight="600">{counselorApplicationStore.currentApplication.student.user.username}</Text>
-                {/* 신청서 다운로드 부분은 아직 구현하지 못했습니다. API를 콘솔에 찍어보면 string type로 나옵니다  */}
-                <Button onClick={() => console.log("임시")} size='sm' style={{ backgroundColor: "#D9D9D9" }}>
-                    <img src="https://cdn.pixabay.com/photo/2016/06/15/14/54/download-1459070_1280.png" width="15%"></img>
+                <Button onClick={() => handleDownload('../../../../djangoapp/'+counselorApplicationStore.currentApplication.application_file,
+                counselorApplicationStore.currentApplication.application_file)} 
+                size='sm' leftIcon={<DownloadIcon />} 
+                style={{ backgroundColor: "#D9D9D9" }}>
                     신청서 다운로드
                 </Button>
             </VStack>

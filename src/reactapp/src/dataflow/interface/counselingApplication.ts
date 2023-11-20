@@ -27,7 +27,7 @@ export type ICounselingPreferfields = {
 export type ICounselingApplicationDetail = {
     id: number,
     student: ICounselingStudentDetail,
-    application_file: string | null,
+    application_file: string,
     applied_at: string,
     counseling_type: string,
     test_date: string,
