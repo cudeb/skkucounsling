@@ -70,6 +70,22 @@ class CounselingScheduleStudent(APIView):
         counseling_schedule = CounselingSchedule.objects.filter(counseling__student=student)
         res['counseling_schedule'] = CounselingScheduleSerializer(counseling_schedule, many=True).data
         res['test_schedule'] = test_schedule
+        res['last_schedule'] = CounselingScheduleSerializer(counseling_schedule.last()).data
+        # please count Yet, Done session
+        current_time = datetime.datetime.now().date()
+        done_count = 0
+        absence_count = 0
+
+        for schedule in counseling_schedule:
+            if schedule.session_status == 'Done':
+                done_count += 1
+            elif schedule.session_date < current_time and schedule.session_status == 'Done':
+                absence_count += 1
+        
+        total_count = done_count + absence_count
+        res['done_count'] = done_count
+        res['absence_count'] = absence_count
+        res['attendence_rate'] = done_count / total_count * 100 if total_count else 0
         return Response(res, status=status.HTTP_200_OK)
 
     
@@ -162,6 +178,8 @@ class CounselingApply(APIView):
 
 
         return Response(status=status.HTTP_200_OK)
+    
+
     
     
 class CounselingInfoCounselor(APIView):
