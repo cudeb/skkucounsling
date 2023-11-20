@@ -11,26 +11,21 @@ type AdminDetailProps = {
   selectedSchedules: Array<ScheduleType>;
   selectedIndex: number;
   setSelectedIndex(e: number): void;
-}
+};
 
 const AdminDetail: FC<AdminDetailProps> = ({
   studentInfo,
   selectedSchedules,
   selectedIndex,
-  setSelectedIndex
+  setSelectedIndex,
 }) => {
-
   return (
-    <HStack
-      width="100%"
-      gap="2rem"
-      justify="center"
-    >
+    <HStack width="100%" gap="2rem" justify="center">
       <VStack
         style={{
           height: "30rem",
           backgroundColor: "rgba(41, 41, 41, 0.1)",
-          padding: "2rem"
+          padding: "2rem",
         }}
         spacing="2rem"
       >
@@ -41,7 +36,7 @@ const AdminDetail: FC<AdminDetailProps> = ({
         style={{
           height: "30rem",
           backgroundColor: "rgba(41, 41, 41, 0.1)",
-          padding: "1rem"
+          padding: "1rem",
         }}
         spacing="10rem"
       >
@@ -56,7 +51,8 @@ const AdminDetail: FC<AdminDetailProps> = ({
         style={{
           height: "30rem",
           backgroundColor: "rgba(41, 41, 41, 0.1)",
-          padding: "1rem"
+          padding: "1rem",
+          flex: 1,
         }}
         spacing="10rem"
       >

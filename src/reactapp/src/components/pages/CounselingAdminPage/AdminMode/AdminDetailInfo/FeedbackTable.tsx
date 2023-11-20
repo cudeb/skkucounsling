@@ -39,7 +39,12 @@ const FeedbackTable: FC<FeedbackTableProps> = ({ selectedSchedules }) => {
   }, [selectedSchedules]);
 
   return (
-    <VStack gap="0">
+    <VStack
+      gap="0"
+      style={{
+        width: "100%",
+      }}
+    >
       <HStack
         style={{
           width: "100%",
@@ -67,6 +72,7 @@ const FeedbackTable: FC<FeedbackTableProps> = ({ selectedSchedules }) => {
         style={{
           overflowY: "scroll",
           height: "27rem",
+          width: "100%",
         }}
       >
         {feedbacks[0] &&
