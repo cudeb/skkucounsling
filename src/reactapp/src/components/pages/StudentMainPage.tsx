@@ -86,13 +86,13 @@ const TaskPendingOerview = observer(() => {
             <Text as="b">
               상담 시작일:
               {stringToKrString(
-                studentStore.studentInfo.last_schedule.session_date
+                studentStore.studentInfo?.last_schedule?.session_date || ""
               )}
             </Text>
             <Text color="#00953d" as="b">
               다음 상담일:
               {stringToKrString(
-                studentStore.studentInfo.next_schedule?.session_date ||
+                studentStore.studentInfo?.start_schedule?.session_date ||
                   "2023-11-20"
               )}
             </Text>

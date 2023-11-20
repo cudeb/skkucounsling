@@ -32,11 +32,15 @@ export type ICounselingSchedule = {
 
 export type ICounselingStudentStatus = {
   last_schedule: ICounselingSchedule;
-  next_schedule: ICounselingSchedule;
+  start_schedule: ICounselingSchedule;
   date_next: string;
   done_count: number;
   upcoming_count: number;
   absence_count: number;
+};
+
+export type ICounselingTestSchedule = {
+  test_date: string;
 };
 
 export interface IApplicationForm {

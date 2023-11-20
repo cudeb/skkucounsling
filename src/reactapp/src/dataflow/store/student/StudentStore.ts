@@ -4,12 +4,14 @@ import {
   ICounselingSchedule,
   ICounselingStudent,
   ICounselingStudentStatus,
+  ICounselingTestSchedule,
 } from "../../interface/counseling";
 import { DateInfo } from "../../../components/Calendar";
 import { compareDateOnly, numToDateString } from "../../DateFunc";
 
 class StudentStore {
   schedules: ICounselingSchedule[] = [];
+  testSchedules: ICounselingTestSchedule[] = [];
   calendarSchedule: { [key: string]: DateInfo } = {};
   constructor() {
     makeAutoObservable(this, {
@@ -73,6 +75,12 @@ class StudentStore {
         const schedules: ICounselingSchedule[] = json.counseling_schedule;
         this.schedules = schedules;
         this.studentInfo = json;
+        this.testSchedules = json.test_schedule;
+
+        if (this.studentInfo?.last_schedule.session_date) {
+        } else {
+          this.studentInfo = undefined;
+        }
 
         this.processSchedule();
       })
@@ -84,8 +92,15 @@ class StudentStore {
 
   processSchedule = () => {
     let schedule: { [key: string]: DateInfo } = {};
+
+    this.testSchedules.forEach((session) => {
+      schedule[session.test_date] = {
+        task: "심리",
+      };
+    });
     this.schedules.forEach((session) => {
       //extract only xxxx-xx-xx
+
       const date_only = session.session_date.split("T")[0];
       schedule[date_only] = {
         task:
