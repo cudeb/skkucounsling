@@ -14,9 +14,11 @@ const LoginPage = observer(() => {
 
   useEffect(() => {
     if (loginStore.loginSuccess) {
-      if (cookieManager.readCookie(ACCOUNT_TYPE) === "s")
-        navigation("/student/home");
-      else navigation("/admin/home");
+      setTimeout(() => {
+        if (cookieManager.readCookie(ACCOUNT_TYPE) === "s")
+          navigation("/student/home");
+        else navigation("/admin/home");
+      }, 1000);
     }
 
     if (loginStore.errorMsg) {

@@ -15,17 +15,19 @@ const CounselingAdminPage = () => {
 
   const [basicInfo, setBasicInfo] = useState<Array<BasicInfoType>>([]);
   const [schedules, setSchedules] = useState<Array<ScheduleType>>([]);
-  const [selectedSchedules, setSelectedSchedules] = useState<Array<ScheduleType>>([]);
+  const [selectedSchedules, setSelectedSchedules] = useState<
+    Array<ScheduleType>
+  >([]);
 
   useEffect(() => {
     const fetchInfoData = async () => {
       await counselorStore.fetchInfo(() => {
-        setBasicInfo(toJS(counselorStore.basicInfo));
+        setBasicInfo(toJS(counselorStore.basicInfo) || []);
       });
-    }
+    };
     const fetchScheduleData = async () => {
       await counselorStore.fetchSchedule(() => {
-        setSchedules(toJS(counselorStore.schedules));
+        setSchedules(toJS(counselorStore.schedules) || []);
         let scheduledArray: Array<ScheduleType> = [];
         schedules.forEach((schedule) => {
           if (schedule.counseling === selectedId) {
@@ -33,8 +35,8 @@ const CounselingAdminPage = () => {
           }
         });
         setSelectedSchedules(scheduledArray);
-      })
-    }
+      });
+    };
 
     fetchInfoData().then();
     fetchScheduleData().then();
@@ -42,24 +44,24 @@ const CounselingAdminPage = () => {
 
   return (
     <VStack style={{ width: "100%" }}>
-      <Appbar/>
+      <Appbar />
       <VStack
         style={{
           width: "100%",
           alignItems: "flex-start",
           gap: "2rem",
-          padding: "2rem 3rem"
+          padding: "2rem 3rem",
         }}
       >
         <Flex style={{ width: "100%" }}>
           <Text fontSize="2xl">상담 관리 페이지</Text>
-          <Spacer/>
+          <Spacer />
           {isMainMode ? (
             <input
               style={{
                 width: "15rem",
                 padding: "0 1rem",
-                border: "1px solid #000000"
+                border: "1px solid #000000",
               }}
               type="text"
               placeholder="학생 이름을 입력해주세요"
@@ -90,8 +92,10 @@ const CounselingAdminPage = () => {
           />
         ) : (
           <AdminDetail
-            studentInfo={basicInfo.find((app) =>
-              app.id === selectedId)?.student ?? UserInfoDefault}
+            studentInfo={
+              basicInfo.find((app) => app.id === selectedId)?.student ??
+              UserInfoDefault
+            }
             selectedSchedules={selectedSchedules}
             selectedIndex={selectedIndex}
             setSelectedIndex={setSelectedIndex}

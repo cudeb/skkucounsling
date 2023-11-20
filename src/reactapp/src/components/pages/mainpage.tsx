@@ -1,7 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { loginStore, mainStore } from "../../dataflow/store";
 import { Button, HStack, Text, VStack } from "@chakra-ui/react";
-import IconSkkuSg from "../../resources/ic_skku_sg.png";
 import Appbar from "../Appbar";
 import IcCheveron from "../../resources/mainpage/ic_chevron_right.png";
 import IcAssign from "../../resources/mainpage/ic_assign.png";
@@ -67,6 +66,17 @@ const SlideItem = ({
 
 const MainPage = observer(() => {
   const store = mainStore;
+  const navigation = useNavigate();
+
+  const navigateToHome = () => {
+    if (!loginStore.loginSuccess) {
+      navigation("/");
+    } else if (cookieManager.readCookie(ACCOUNT_TYPE) === "s") {
+      navigation("/student/home");
+    } else if (cookieManager.readCookie(ACCOUNT_TYPE) === "t") {
+      navigation("/admin/home");
+    }
+  };
   return (
     <VStack
       style={{
@@ -74,8 +84,7 @@ const MainPage = observer(() => {
         overflow: "hidden",
       }}
     >
-      <Appbar/>
-
+      <Appbar />
       <HStack
         style={{
           marginTop: "2rem",
@@ -83,7 +92,7 @@ const MainPage = observer(() => {
       >
         <SlideItem image={IcDocument} title="상담신청서 작성 및 제출" />
         <SlideItem image={IcCalendar} title="심리 검사 예약" />
-        <SlideItem image={IcTasks} title="심리 검사 진행행" />
+        <SlideItem image={IcTasks} title="심리 검사 진행" />
         <SlideItem image={IcAssign} title="상담사 배정" />
         <SlideItem image={IcCounseling} title="상담 시작" isEnd />
       </HStack>
@@ -135,7 +144,10 @@ const MainPage = observer(() => {
       </HStack>
       <HStack style={{ width: "100%", padding: "1rem" }}>
         <div style={{ flex: 1 }} />
-        <Button variant="link">{`카운슬링센터 홈페이지 바로가기 >>`}</Button>
+        <Button
+          onClick={navigateToHome}
+          variant="link"
+        >{`카운슬링센터 홈페이지 바로가기 >>`}</Button>
       </HStack>
     </VStack>
   );
