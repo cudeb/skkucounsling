@@ -68,9 +68,9 @@ const AdminApplicationCheckPage = observer(() => {
   // "Apply" 버튼 클릭을 처리하는 함수
   const handleApplyFilter = () => {
 
-    // 하나라도 선택되지 않았을 때 alert 표시
-    if (!counselType || !counselField || !desiredDay || !desiredTime) {
-      alert('모든 선택지를 선택하세요.');
+    // 희망상담 요일, 시간 둘중 하나만 골랐을 때 때 alert 표시
+    if ( (!desiredDay && desiredTime) || (desiredDay && !desiredTime)) {
+      alert('상담 요일과 날짜로 필터링을 진행할 경우, 두 가지 모두 선택해주세요.');
       return; // 필터링을 진행하지 않음
     }
 
@@ -190,29 +190,32 @@ const AdminApplicationCheckPage = observer(() => {
           </Thead>
           <Tbody>
             {/* 이 부분에 데이터가 유동적으로 바꾸어야 합니다. */}
-            {counselorApplicationStore.counselingApplications.map(application => (
-              < Tr bgColor="gray.100" >
-                <Td>{application.id}</Td>
-                <Td>{application.student.user.username}</Td>
-                <Td>{application.student.user.student_number}</Td>
-                <Td>{getAppliedAt(application.applied_at)}</Td>
-                <Td>{getCounselingType(application.counseling_type)}</Td>
-                <Td>
-                  <Link to={`/admin/personalApplicationCheck/${application.id}`}>
-                    < Button
-                      color="white"
-                      padding="10%"
-                      fontSize="0.7rem"
-                      backgroundColor="#041126"
-                      variant="link"
-                      size="lg"
-                    >
-                      관리하기
-                    </Button>
-                  </Link>
-                </Td>
-              </Tr>
-            ))
+            {counselorApplicationStore.counselingApplications.length===0?(
+              <Text>신청서가 존재하지 않습니다.</Text>
+            ):(
+              counselorApplicationStore.counselingApplications.map(application => (
+                <Tr bgColor="gray.100" >
+                  <Td>{application.id}</Td>
+                  <Td>{application.student.user.username}</Td>
+                  <Td>{application.student.user.student_number}</Td>
+                  <Td>{getAppliedAt(application.applied_at)}</Td>
+                  <Td>{getCounselingType(application.counseling_type)}</Td>
+                  <Td>
+                    <Link to={`/admin/personalApplicationCheck/${application.id}`}>
+                      < Button
+                        color="white"
+                        padding="10%"
+                        fontSize="0.7rem"
+                        backgroundColor="#041126"
+                        variant="link"
+                        size="lg"
+                      >
+                        관리하기
+                      </Button>
+                    </Link>
+                  </Td>
+                </Tr>
+              )))
             }
           </Tbody >
         </Table >

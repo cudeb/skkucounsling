@@ -65,7 +65,7 @@ class CounselorApplicationStore {
               !application.denied && !application.approved
           );
         this.counselingApplications = couselingApplications;
-        console.log(couselingApplications);
+        // console.log(couselingApplications);
       })
       .onFailed((code: number, msg?: string) => {
         console.log(code);
@@ -86,33 +86,45 @@ class CounselorApplicationStore {
       .get("counseling/applications/")
       .onSuccess((json: any) => {
         const couselingApplications: ICounselingApplicationDetail[] =
-          json.couseling_applications.filter(
+          json.counseling_applications.filter(
             (application: ICounselingApplicationDetail) =>
               !application.denied && !application.approved
           );
 
-        const filteredByType = couselingApplications.filter(
-          (application: ICounselingApplicationDetail) =>
-            application.counseling_type === counselType
-        );
+        let filteredByType:ICounselingApplicationDetail[]=couselingApplications;
+        if(counselType!==""){
+          console.log("type filter");
+          filteredByType = couselingApplications.filter(
+            (application: ICounselingApplicationDetail) =>
+              application.counseling_type === counselType
+          );
+        };
+        
+        let filteredByField:ICounselingApplicationDetail[]=filteredByType;
+        if(counselField!==""){
+          console.log("field filter");
+          filteredByField = filteredByType.filter(
+            (application: ICounselingApplicationDetail) =>
+              application.counseling_preferfields.some(
+                (f) => f.field === counselField
+              )
+          );
+        }
 
-        const filteredByField = filteredByType.filter(
-          (application: ICounselingApplicationDetail) =>
-            application.counseling_preferfields.some(
-              (f) => f.field === counselField
-            )
-        );
-
-        const desiredDayAndTime: string = desiredDay + desiredTime;
-        const filteredByTimeSlot = filteredByField.filter(
-          (application: ICounselingApplicationDetail) =>
-            application.counseling_prefertimeslots.some(
-              (f) => f.timeslot === desiredDayAndTime
-            )
-        );
+        let filteredByTimeSlot:ICounselingApplicationDetail[]=filteredByField;
+        if (desiredDay!=="" && desiredTime!==""){
+          console.log("day filter");
+          const desiredDayAndTime: string = desiredDay + desiredTime;
+          filteredByTimeSlot = filteredByField.filter(
+            (application: ICounselingApplicationDetail) =>
+              application.counseling_prefertimeslots.some(
+                (f) => f.timeslot === desiredDayAndTime
+              )
+          );
+        }
 
         this.counselingApplications = filteredByTimeSlot;
-        console.log(filteredByTimeSlot);
+        // console.log(filteredByTimeSlot);
       })
       .onFailed((code: number, msg?: string) => {
         console.log(code);
