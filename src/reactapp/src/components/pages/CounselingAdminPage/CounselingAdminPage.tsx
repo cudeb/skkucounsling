@@ -19,12 +19,28 @@ const CounselingAdminPage = () => {
     Array<ScheduleType>
   >([]);
 
+  const readIdParameter = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const queryId = urlParams.get("id");
+    if (queryId) {
+      setSelectedId(parseInt(queryId));
+      setIsMainMode(false);
+    }
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      readIdParameter();
+    }, 3000);
+  }, []);
+
   useEffect(() => {
     const fetchInfoData = async () => {
       await counselorStore.fetchInfo(() => {
         setBasicInfo(toJS(counselorStore.basicInfo) || []);
       });
     };
+
     const fetchScheduleData = async () => {
       await counselorStore.fetchSchedule(() => {
         setSchedules(toJS(counselorStore.schedules) || []);

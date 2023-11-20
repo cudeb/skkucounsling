@@ -19,6 +19,7 @@ import {
   numToDateString,
 } from "../../dataflow/DateFunc";
 import { ICounselingSchedule } from "../../dataflow/interface/counseling";
+import { useNavigate } from "react-router";
 
 const CounselorMainPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -57,19 +58,33 @@ const CounselorMainPage = () => {
     fetchDetailData().then();
     fetchSchedule().then();
   }, []);
+  const navigate = useNavigate();
+
+  const navigateToStudentDetail = (id: number) => {
+    navigate("/admin/manageCounseling?id=" + id);
+  };
 
   const [modalDate, setModalDate] = useState<number>(-1);
 
-  const renderFilteredStudents = (typeNum: number): Array<string> => {
-    let newSet: Set<string> = new Set();
-    detailInfo
+  const renderFilteredStudents = (
+    typeNum: number
+  ): Array<{ username: string; id: number }> => {
+    let newSet: Set<{ username: string; id: number }> = new Set();
+    basicInfo
       .filter(
         (info) =>
-          info.counseling_type === `personal_${typeNum}` &&
-          basicInfo.find((basic) => basic.counseling_application.id === info.id)
+          info.counseling_application.counseling_type ===
+            `personal_${typeNum}` &&
+          basicInfo.find(
+            (basic) =>
+              basic.counseling_application.id === info.counseling_application.id
+          )
       )
       .forEach((e) => {
-        newSet.add(e.student.user.username);
+        newSet.add({
+          username: e.student.user.username,
+          id: e.id,
+        });
       });
     return Array.from(newSet);
   };
@@ -121,24 +136,36 @@ const CounselorMainPage = () => {
                   검사 해석 상담(검사 후 1회기 해석)
                 </Text>
                 {renderFilteredStudents(1).map((line, index) => (
-                  <Text key={index} fontSize="sm">
-                    • {line} 학생
+                  <Text
+                    key={index}
+                    fontSize="sm"
+                    onClick={() => navigateToStudentDetail(line.id)}
+                  >
+                    • {line.username} 학생
                   </Text>
                 ))}
               </VStack>
               <VStack style={{ alignItems: "flex-start" }}>
                 <Text fontWeight="bold">5회기 개인 상담</Text>
                 {renderFilteredStudents(5).map((line, index) => (
-                  <Text key={index} fontSize="sm">
-                    • {line} 학생
+                  <Text
+                    key={index}
+                    fontSize="sm"
+                    onClick={() => navigateToStudentDetail(line.id)}
+                  >
+                    • {line.username} 학생
                   </Text>
                 ))}
               </VStack>
               <VStack style={{ alignItems: "flex-start" }}>
                 <Text fontWeight="bold">10회기 개인 상담</Text>
                 {renderFilteredStudents(10).map((line, index) => (
-                  <Text key={index} fontSize="sm">
-                    • {line} 학생
+                  <Text
+                    key={index}
+                    fontSize="sm"
+                    onClick={() => navigateToStudentDetail(line.id)}
+                  >
+                    • {line.username} 학생
                   </Text>
                 ))}
               </VStack>
