@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { toJS } from "mobx";
 import Appbar from "../Appbar";
-import Calendar from "../Calendar";
+import Calendar, { DateInfo } from "../Calendar";
 import CounselingScheduleModal from "../modals/CounselingScheduleModal";
 import { counselorStore } from "../../dataflow/store/counselor/CounselorStore";
 import { BasicInfoType, DetailInfoType } from "./CounselingAdminPage/interface";
@@ -11,6 +11,9 @@ const CounselorMainPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [basicInfo, setBasicInfo] = useState<BasicInfoType[]>([]);
   const [detailInfo, setDetailInfo] = useState<DetailInfoType[]>([]);
+  const [calendarInfo, setCalendarInfo] = useState<{ [key: string]: DateInfo }>(
+    {}
+  );
 
   useEffect(() => {
     const fetchInfoData = async () => {
@@ -24,8 +27,21 @@ const CounselorMainPage = () => {
       });
     };
 
+    const fetchSchedule = async () => {
+      await counselorStore.fetchSchedule(() => {
+        let schedules: { [key: string]: DateInfo } = {};
+        counselorStore.schedules.forEach((schedule) => {
+          schedules[schedule.session_date] = {
+            task: schedule.session_status === "Yet" ? "예정" : "진행",
+          };
+        });
+        setCalendarInfo(schedules);
+      });
+    };
+
     fetchInfoData().then();
     fetchDetailData().then();
+    fetchSchedule().then();
   }, []);
 
   const renderFilteredStudents = (typeNum: number): Array<string> => {
@@ -115,15 +131,7 @@ const CounselorMainPage = () => {
               </Text>
             </VStack>
           </VStack>
-          <VStack
-            style={{
-              padding: "2rem",
-              border: "1px solid #292929",
-            }}
-            onClick={onOpen}
-          >
-            <Calendar />
-          </VStack>
+          <Calendar dayDetails={calendarInfo} />
         </HStack>
       </VStack>
       <CounselingScheduleModal isOpen={isOpen} onClose={onClose} date={-1} />
