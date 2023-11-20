@@ -55,7 +55,7 @@ function App() {
                     element={<AdminApplicationCheckPage />}
                   />
                   <Route
-                    path="/admin/personalApplicationCheck"
+                    path="/admin/personalApplicationCheck/:id"
                     element={<AdminPersonalApplicationCheckPage />}
                   />
                 </>

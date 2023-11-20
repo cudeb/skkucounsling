@@ -1,25 +1,48 @@
 import { useState, useEffect } from "react";
+import { toJS } from "mobx";
 import Appbar from "../../Appbar";
 import AdminMain from "./AdminMode/AdminMain";
 import AdminDetail from "./AdminMode/AdminDetail";
 import { counselorStore } from "../../../dataflow/store/counselor/CounselorStore";
+import { BasicInfoType, ScheduleType, UserInfoDefault } from "./interface";
 import { Text, VStack, Flex, Spacer } from "@chakra-ui/react";
 
 const CounselingAdminPage = () => {
   const [isMainMode, setIsMainMode] = useState<boolean>(true);
-  const [selectedId, setSelectedId] = useState<string>("");
+  const [selectedId, setSelectedId] = useState<number>(-1);
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [searchName, setSearchName] = useState<string>("");
 
+  const [basicInfo, setBasicInfo] = useState<Array<BasicInfoType>>([]);
+  const [schedules, setSchedules] = useState<Array<ScheduleType>>([]);
+  const [selectedSchedules, setSelectedSchedules] = useState<Array<ScheduleType>>([]);
+
   useEffect(() => {
-    counselorStore.fetchInfo();
-    counselorStore.fetchSchedule();
-  }, []);
+    const fetchInfoData = async () => {
+      await counselorStore.fetchInfo(() => {
+        setBasicInfo(toJS(counselorStore.basicInfo));
+      });
+    }
+    const fetchScheduleData = async () => {
+      await counselorStore.fetchSchedule(() => {
+        setSchedules(toJS(counselorStore.schedules));
+        let scheduledArray: Array<ScheduleType> = [];
+        schedules.forEach((schedule) => {
+          if (schedule.counseling === selectedId) {
+            scheduledArray.push(schedule);
+          }
+        });
+        setSelectedSchedules(scheduledArray);
+      })
+    }
+
+    fetchInfoData().then();
+    fetchScheduleData().then();
+  }, [selectedId]);
 
   return (
     <VStack style={{ width: "100%" }}>
       <Appbar/>
-
       <VStack
         style={{
           width: "100%",
@@ -49,7 +72,10 @@ const CounselingAdminPage = () => {
               style={{ cursor: "pointer" }}
               fontSize="2xl"
               fontWeight="bold"
-              onClick={() => setIsMainMode(true)}
+              onClick={() => {
+                setSelectedId(-1);
+                setIsMainMode(true);
+              }}
             >
               {"<"} Back
             </Text>
@@ -57,13 +83,16 @@ const CounselingAdminPage = () => {
         </Flex>
         {isMainMode ? (
           <AdminMain
+            basicInfo={basicInfo}
             searchName={searchName}
             setIsMainMode={setIsMainMode}
             setSelectedId={setSelectedId}
           />
         ) : (
           <AdminDetail
-            selectedId={selectedId}
+            studentInfo={basicInfo.find((app) =>
+              app.id === selectedId)?.student ?? UserInfoDefault}
+            selectedSchedules={selectedSchedules}
             selectedIndex={selectedIndex}
             setSelectedIndex={setSelectedIndex}
           />

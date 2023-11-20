@@ -1,24 +1,19 @@
 import { FC } from "react";
 import StudentProfile from "../../../../../StudentProfile";
 import StudentInfo from "../../../../../StudentInfo";
-import { studentData } from "../../../StudentData";
-import { StudentInfoDefault } from "../../../../../../interface";
+import { UserInfoType } from "../../../interface";
 import { HStack } from "@chakra-ui/react";
 
 type ModalInfoProps = {
-  selectedId: string;
+  studentInfo: UserInfoType;
 };
 
-const ModalInfo: FC<ModalInfoProps> = ({ selectedId }) => {
+const ModalInfo: FC<ModalInfoProps> = ({ studentInfo }) => {
 
   return (
     <HStack style={{ justifyContent: "center" }} spacing="2rem">
-      <StudentProfile
-        selectedStudent={studentData.find((student) => student.id === selectedId) ?? StudentInfoDefault}
-      />
-      <StudentInfo
-        selectedStudent={studentData.find((student) => student.id === selectedId) ?? StudentInfoDefault}
-      />
+      <StudentProfile studentName={studentInfo.user.username ?? ""} />
+      <StudentInfo studentInfo={studentInfo} />
     </HStack>
   );
 };

@@ -1,14 +1,14 @@
 import { FC, MouseEvent } from "react";
-import { StudentInfoType } from "../interface";
-import { Box, Text, VStack } from "@chakra-ui/react";
+import { Text, VStack } from "@chakra-ui/react";
+import IcUserProfile from "../resources/mainpage/ic_user_profile.png";
 
 type StudentProfileProps = {
-  selectedStudent: StudentInfoType;
+  studentName: string;
   onClick?(e: MouseEvent<HTMLDivElement>): void;
 }
 
 const StudentProfile: FC<StudentProfileProps> = ({
-  selectedStudent,
+  studentName,
   onClick
 }) => {
 
@@ -23,8 +23,15 @@ const StudentProfile: FC<StudentProfileProps> = ({
       }}
       onClick={onClick}
     >
-      <Box>{selectedStudent.profileImg}</Box>
-      <Text fontWeight="bold">{selectedStudent.name} 학생</Text>
+      <img
+        src={IcUserProfile}
+        alt="profile image"
+        style={{
+          width: "5rem",
+          height: "5rem",
+        }}
+      />
+      <Text fontWeight="bold">{studentName} 학생</Text>
     </VStack>
   );
 };

@@ -1,79 +1,72 @@
-import { FC } from "react";
-import { studentData } from "../../StudentData";
-import { Box, Text, HStack, VStack } from "@chakra-ui/react";
+import { FC, useEffect, useState } from "react";
+import { toJS } from "mobx";
+import { counselorStore } from "../../../../../dataflow/store/counselor/CounselorStore";
+import { ScheduleType } from "../../interface";
+import { tableBodyStyle, tableHeadStyle } from "../../../../../styles/styles";
+import { Table, Thead, Tr, Th, Center, Tbody, Td, TableContainer } from "@chakra-ui/react";
 
 type FeedbackTableProps = {
-  selectedId: string;
+  selectedSchedules: Array<ScheduleType>;
 }
 
-const FeedbackTable: FC<FeedbackTableProps> = ({ selectedId }) => {
+const FeedbackTable: FC<FeedbackTableProps> = ({
+  selectedSchedules,
+}) => {
+  const [feedbacks, setFeedbacks] = useState<Array<string>>([]);
+
+  useEffect(() => {
+    const fetchJournalData = async (schedule_id: number) => {
+      await counselorStore.fetchJournal(schedule_id, () => {
+        let newFeedback = [...feedbacks];
+        newFeedback.push(toJS(counselorStore.journal));
+        setFeedbacks(newFeedback);
+      });
+    };
+
+    selectedSchedules.forEach((schedule) => {
+      fetchJournalData(schedule.id).then();
+    });
+  }, [selectedSchedules]);
 
   return (
-    <VStack
-      style={{
-        backgroundColor: "rgba(41, 41, 41, 0.3)",
-        justifyContent: "center",
-        padding: "1px"
-      }}
-      spacing="1px"
-    >
-      <HStack spacing="1px">
-        <Box style={{
-          width: "3rem",
-          backgroundColor: "#F5F5F5",
-          padding: "4px 0"
-        }}>
-          <Text fontSize="sm" fontWeight="bold">번호</Text>
-        </Box>
-        <Box style={{
-          width: "20rem",
-          backgroundColor: "#F5F5F5",
-          padding: "4px 0"
-        }}>
-          <Text fontSize="sm" fontWeight="bold">피드백 내용</Text>
-        </Box>
-        <Box style={{
-          width: "7rem",
-          backgroundColor: "#F5F5F5",
-          padding: "4px 0"
-        }}>
-          <Text fontSize="sm" fontWeight="bold">이행 여부</Text>
-        </Box>
-      </HStack>
-      {studentData.find(
-        (student) =>
-          student.id === selectedId)?.feedbackData?.map((data, index) => (
-            <HStack spacing="1px">
-              <Box
-                style={{
-                  width: "3rem",
-                  backgroundColor: "#FFFFFF",
-                  padding: "4px 0"
-                }}
-              >
-                <Text fontSize="sm">{index + 1}</Text>
-              </Box>
-              <Box
-                style={{
-                  width: "20rem",
-                  backgroundColor: "#FFFFFF",
-                  padding: "4px 0"
-                }}
-              >
-                <Text fontSize="sm">{data.feedback}</Text>
-              </Box>
-              <Box
-                style={{
-                  width: "7rem",
-                  backgroundColor: "#FFFFFF",
-                  padding: "4px 0"
-                }}
-              >
-                <Text fontSize="sm">{data.isCompleted ? "O" : "X"}</Text>
-              </Box>
-            </HStack>
-      ))}
-    </VStack>
+    <TableContainer overflowX="hidden">
+      <Table colorScheme="gray">
+        <Thead>
+          <Tr>
+            <Th style={tableHeadStyle}>
+              <Center w="3rem" fontSize="sm">번호</Center>
+            </Th>
+            <Th style={tableHeadStyle}>
+              <Center w="20rem" fontSize="sm">피드백 내용</Center>
+            </Th>
+            <Th style={tableHeadStyle}>
+              <Center w="7rem" fontSize="sm">이행 여부</Center>
+            </Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {feedbacks[0] && feedbacks.map((feedback, index) => (
+            <Tr>
+              <Td style={tableBodyStyle}>
+                <Center w="3rem" fontSize="sm">
+                  {index + 1}
+                </Center>
+              </Td>
+              <Td style={tableBodyStyle}>
+                <Center w="20rem" fontSize="sm">
+                  {feedback.length > 25 ? `${feedback.slice(0, 25)}...` : feedback}
+                </Center>
+              </Td>
+              <Td style={tableBodyStyle}>
+                <Center w="7rem" fontSize="sm">
+                  X
+                </Center>
+              </Td>
+            </Tr>
+          ))}
+        </Tbody>
+      </Table>
+    </TableContainer>
   );
 };
 

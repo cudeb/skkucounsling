@@ -1,8 +1,8 @@
-import { StudentInfoType } from "../../../interface";
+import { StudentInfoType } from "./interface";
 
 export const studentData: Array<StudentInfoType> = [
   {
-    id: "0",
+    id: 0,
     name: "김성균",
     profileImg: "img0",
     studentId: "2020310000",
@@ -38,7 +38,7 @@ export const studentData: Array<StudentInfoType> = [
     ]
   },
   {
-    id: "1",
+    id: 1,
     name: "이성균",
     profileImg: "img1",
     studentId: "2021310000",
@@ -48,7 +48,7 @@ export const studentData: Array<StudentInfoType> = [
     phoneNumber: "010-1398-1111"
   },
   {
-    id: "2",
+    id: 2,
     name: "박성균",
     profileImg: "img2",
     studentId: "2022310000",
@@ -58,7 +58,7 @@ export const studentData: Array<StudentInfoType> = [
     phoneNumber: "010-1398-2222"
   },
   {
-    id: "3",
+    id: 3,
     name: "최성균",
     profileImg: "img3",
     studentId: "2023310000",
@@ -68,7 +68,7 @@ export const studentData: Array<StudentInfoType> = [
     phoneNumber: "010-1398-3333"
   },
   {
-    id: "4",
+    id: 4,
     name: "정성균",
     profileImg: "img4",
     studentId: "2024310000",

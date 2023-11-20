@@ -1,17 +1,20 @@
 import { FC } from "react";
 import DetailedStatusModal from "./DetailedStatusModal";
-import { studentData } from "../../StudentData";
-import { tableHeadStyle, tableBodyStyle } from "../../../../../styles";
-import { Box, HStack, Text, VStack, useDisclosure } from "@chakra-ui/react";
+import { formattedTimeslot } from "../../../../../dataflow/DateFunc";
+import { ScheduleType, UserInfoType } from "../../interface";
+import { tableHeadStyle, tableBodyStyle } from "../../../../../styles/styles";
+import { Center, Table, Thead, Tbody, Tr, Th, Td, TableContainer, useDisclosure } from '@chakra-ui/react'
 
 type StudentTableProps = {
-  selectedId: string;
+  studentInfo: UserInfoType;
+  selectedSchedules: Array<ScheduleType>;
   selectedIndex: number;
   setSelectedIndex(e: number): void;
 }
 
 const StudentTable: FC<StudentTableProps> = ({
-  selectedId,
+  studentInfo,
+  selectedSchedules,
   selectedIndex,
   setSelectedIndex
 }) => {
@@ -22,79 +25,75 @@ const StudentTable: FC<StudentTableProps> = ({
   ];
 
   return (
-    <VStack
-      style={{
-        backgroundColor: "rgba(41, 41, 41, 0.3)",
-        justifyContent: "center",
-        padding: "1px"
-      }}
-      spacing="1px"
-    >
-      <HStack spacing="1px">
-        {tableHeadArray.map((head, index) => (
-          <Box key={index} style={tableHeadStyle}>
-            <Text fontSize="sm" fontWeight="bold">{head}</Text>
-          </Box>
-        ))}
-      </HStack>
-      {studentData.find(
-        (student) =>
-          student.id === selectedId)?.counselingInfo?.map((info, index) => (
-            <HStack spacing="1px">
-              <Box style={tableBodyStyle}>
-                <Text fontSize="sm">{index + 1}</Text>
-              </Box>
-              <Box style={tableBodyStyle}>
-                <Text fontSize="sm">
-                  {studentData.find((student) => student.id === selectedId)?.name}
-                </Text>
-              </Box>
-              <Box style={tableBodyStyle}>
-                <Text fontSize="sm">{info.date}</Text>
-              </Box>
-              <Box style={tableBodyStyle}>
-                <Text fontSize="sm">{info.time}시</Text>
-              </Box>
-              <Box style={tableBodyStyle}>
-                <Text fontSize="sm">
-                  {info.isCompleted ? "상담 완료" : "상담 전"}
-                </Text>
-              </Box>
-              <Box
-                style={{
-                  width: "5rem",
-                  height: "100%",
-                  backgroundColor: "#FFFFFF",
-                  padding: "4px 0",
-                }}
-              >
-                {info.isCompleted ? (
-                  <Text
+    <TableContainer overflowX="hidden">
+      <Table colorScheme="gray">
+        <Thead>
+          <Tr>
+            {tableHeadArray.map((head, index) => (
+              <Th key={index} style={tableHeadStyle}>
+                <Center w="5rem" fontSize="sm">{head}</Center>
+              </Th>
+            ))}
+          </Tr>
+        </Thead>
+        <Tbody>
+          {selectedSchedules.map((schedule, index) => (
+            <Tr key={index}>
+              <Td style={tableBodyStyle}>
+                <Center w="5rem" fontSize="sm">
+                  {schedule.session_number}
+                </Center>
+              </Td>
+              <Td style={tableBodyStyle}>
+                <Center w="5rem" fontSize="sm">
+                  {studentInfo.user.username ?? ""}
+                </Center>
+              </Td>
+              <Td style={tableBodyStyle}>
+                <Center w="5rem" fontSize="sm">
+                  {schedule.session_date}
+                </Center>
+              </Td>
+              <Td style={tableBodyStyle}>
+                <Center w="5rem" fontSize="sm">
+                  {formattedTimeslot(schedule.session_timeslot)}
+                </Center>
+              </Td>
+              <Td style={tableBodyStyle}>
+                <Center w="5rem" fontSize="sm">
+                  {schedule.session_status === "Yet" ? "상담 전" : "상담 완료"}
+                </Center>
+              </Td>
+              <Td style={tableBodyStyle}>
+                {schedule.session_status === "Done" && (
+                  <Center
                     style={{
-                      cursor: "pointer"
+                      cursor: "pointer",
+                      fontWeight: "bold",
                     }}
+                    w="5rem"
                     fontSize="sm"
-                    fontWeight="bold"
                     onClick={() => {
                       setSelectedIndex(index);
                       onOpen();
                     }}
                   >
                     상세보기
-                  </Text>
-                ) : (
-                  <Text fontSize="sm">3시간 남음</Text>
+                  </Center>
                 )}
-              </Box>
-            </HStack>
-      ))}
+              </Td>
+            </Tr>
+          ))}
+        </Tbody>
+      </Table>
       <DetailedStatusModal
         isOpen={isOpen}
         onClose={onClose}
-        selectedId={selectedId}
+        studentInfo={studentInfo}
+        selectedSchedules={selectedSchedules}
         selectedIndex={selectedIndex}
       />
-    </VStack>
+    </TableContainer>
   );
 };
 

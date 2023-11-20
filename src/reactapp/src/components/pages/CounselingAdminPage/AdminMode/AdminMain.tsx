@@ -1,20 +1,22 @@
 import { FC } from "react";
 import StudentProfile from "../../../StudentProfile";
-import { studentData } from "../StudentData";
+import { BasicInfoType } from "../interface";
 import { Flex } from "@chakra-ui/react";
 
 type AdminMainProps = {
+  basicInfo: Array<BasicInfoType>;
   searchName: string;
   setIsMainMode(e: boolean): void;
-  setSelectedId(e: string): void;
+  setSelectedId(e: number): void;
 };
 
 const AdminMain: FC<AdminMainProps> = ({
+  basicInfo,
   searchName,
   setIsMainMode,
   setSelectedId
 }) => {
-  const onClickProfile = (studentId: string) => {
+  const onClickProfile = (studentId: number) => {
     setIsMainMode(false);
     setSelectedId(studentId);
   };
@@ -30,13 +32,13 @@ const AdminMain: FC<AdminMainProps> = ({
       flexWrap="wrap"
       gap="2rem"
     >
-      {studentData.filter(
-        (student) =>
-          student.name.includes(searchName)).map((student) => (
-            <StudentProfile
-              selectedStudent={student}
-              onClick={() => onClickProfile(student.id)}
-            />
+      {basicInfo.filter((app) =>
+        app.student.user.username.includes(searchName)).map((app, index) => (
+          <StudentProfile
+            key={index}
+            studentName={app.student.user.username}
+            onClick={() => onClickProfile(app.id)}
+          />
       ))}
     </Flex>
   );

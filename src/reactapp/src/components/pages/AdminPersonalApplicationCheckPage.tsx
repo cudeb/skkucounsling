@@ -5,14 +5,40 @@ import { Table, Thead, Tbody, Tr, Th, Td, TableContainer } from '@chakra-ui/reac
 import { Children, useEffect, useState } from "react";
 import AcceptModal from "./AcceptModal";
 import RefuseModal from "./RefuseModal";
-
+import { counselorApplicationStore } from "../../dataflow/store/counselor/CounselorApplicationStore"
+import React from 'react';
+import { useParams } from 'react-router-dom';
 
 const AdminPersonalApplicationCheckPage = observer(() => {
 
-    // const [accessToken, setAccessToken] = useState('');
-    // const [Data, setData] = useState([])
-    //
     const [isAcceptModalOpen, setIsAcceptModalOpen] = useState(false);
+
+    const counselingTypeMappings: { [key: string]: string } = {
+        'personal_1': '검사 해석 상담(검사 후 1회기 해석)',
+        'personal_5': '5회기 개인 상담',
+        'personal_10': '10회기 개인 상담',
+    };
+
+    const getCounselingType = (type: string) => {
+        return counselingTypeMappings[type] || type;
+    };
+
+    function getAppliedAt(inputDateString: string): string {
+        const inputDate = new Date(inputDateString);
+
+        if (isNaN(inputDate.getTime())) {
+            return 'Invalid Date';
+        }
+
+        const year = inputDate.getFullYear();
+        const month = inputDate.getMonth() + 1;
+        const day = inputDate.getDate();
+        const hours = inputDate.getHours();
+        const minutes = inputDate.getMinutes();
+        const formattedDate = `${year}년 ${month}월 ${day}일  ${hours}시 ${minutes < 10 ? '0' : ''}${minutes}분`;
+
+        return formattedDate;
+    }
 
     const openAcceptModal = () => {
         setIsAcceptModalOpen(true);
@@ -31,30 +57,24 @@ const AdminPersonalApplicationCheckPage = observer(() => {
     const closeRefuseModal = () => {
         setIsRefuseModalOpen(false);
     };
-    // // 토큰을 로컬 스토리지에서 가져오는 함수
-    // const getAccessToken = () => {
-    //     const storedToken = localStorage.getItem('access_token');
-    //     if (storedToken) {
-    //         setAccessToken(storedToken);
-    //     }
-    // };
-    // 
-    // // 컴포넌트가 마운트될 때 토큰을 가져오도록 설정
-    // useEffect(() => {
-    //     getAccessToken();
-    // }, []);
-    // 
-    // useEffect(() => {
-    //     fetch('http://localhost:8000/counseling/schedule-counselor/', {
-    //         method: 'GET',
-    //         headers: {
-    //             'Authorization': `Bearer ${accessToken}`,
-    //             'Content-Type': 'application/json',
-    //         },
-    //     })
-    //         .then((Response) => Response.json())
-    //         .then((data) => setApplicationData(data.data))
-    // })
+
+    // 해당 웹페이지의 주소값에서 id를 추출하는 함수
+    function extractIdFromUrl(): number {
+        const currentUrl: string = window.location.href;
+        const match: RegExpMatchArray | null = currentUrl.match(/\/admin\/personalApplicationCheck\/(\d+)/);
+
+        if (match && match[1]) {
+            const id: number = parseInt(match[1], 10);
+            return id;
+        } else {
+            throw new Error('ID not found in the URL');
+        }
+    }
+
+    useEffect(() => {
+        const currentId = extractIdFromUrl();
+        counselorApplicationStore.fetchhCurrentApplication(currentId);
+    }, []);
 
     const PageDescription = observer(() => {
         return (
@@ -74,6 +94,7 @@ const AdminPersonalApplicationCheckPage = observer(() => {
             <VStack style={{ alignItems: "center", padding: "2rem", width: "20%", backgroundColor: "white", marginRight: "5%" }}>
                 <img src="https://www.pngarts.com/files/10/Default-Profile-Picture-PNG-Download-Image.png" ></img>
                 <Text marginTop={5} fontSize="l" fontWeight="600">김성균</Text>
+                {/* 신청서 다운로드 부분은 아직 구현하지 못했습니다. API를 콘솔에 찍어보면 string type로 나옵니다  */}
                 <Button onClick={() => console.log("임시")} size='sm' style={{ backgroundColor: "#D9D9D9" }}>
                     <img src="https://cdn.pixabay.com/photo/2016/06/15/14/54/download-1459070_1280.png" width="15%"></img>
                     신청서 다운로드
@@ -84,40 +105,45 @@ const AdminPersonalApplicationCheckPage = observer(() => {
 
     const StudentInfoWrapper = observer(() => {
         return (
-            <VStack style={{ alignItems: "flex-start", padding: "2rem", width: "30%", backgroundColor: "lightgray", marginRight: "2%" }}>
+            <VStack style={{ alignItems: "flex-start", padding: "2rem", width: "45%", backgroundColor: "lightgray", marginRight: "2%" }}>
                 <HStack>
                     <Text marginTop={3} fontSize="large" fontWeight="800" marginRight={3}>상담 종류</Text>
-                    <Text marginTop={3} fontSize="smaller" fontWeight="600">10회기 개인 상담</Text>
+                    <Text marginTop={3} fontSize="smaller" fontWeight="600">{getCounselingType(counselorApplicationStore.currentApplication.counseling_type)}</Text>
                 </HStack>
                 <HStack>
                     <Text marginTop={3} fontSize="large" fontWeight="800" marginRight={3}>상담 분야</Text>
-                    <Text marginTop={3} fontSize="smaller" fontWeight="600">대인 관계, 학업 및 진로</Text>
+                    <Text marginTop={3} fontSize="smaller" fontWeight="600">{counselorApplicationStore.currentApplication.counseling_preferfields.map(field => field.field).join(', ')}</Text>
                 </HStack>
                 <HStack>
-                    <Text marginTop={3} fontSize="large" fontWeight="800" marginRight={3}>희망 상담 시간</Text>
-                    <Text marginTop={3} fontSize="smaller" fontWeight="600">월요일 11:00-12:00</Text>
+                    <Text marginTop={3} fontSize="large" fontWeight="800" marginRight={3}>상담 신청 일시</Text>
+                    <Text marginTop={3} fontSize="smaller" fontWeight="600">{getAppliedAt(counselorApplicationStore.currentApplication.applied_at)}</Text>
                 </HStack>
                 <VStack style={{ alignItems: "flex-start" }}>
                     <Text marginTop={3} fontSize="large" fontWeight="800" marginRight={3}>상담 학생 정보</Text>
-                    <Text marginTop={1} fontSize="smaller" fontWeight="600">이름 : 김성균</Text>
-                    <Text marginTop={1} fontSize="smaller" fontWeight="600">학번 : 2019123456</Text>
-                    <Text marginTop={1} fontSize="smaller" fontWeight="600">학년 : 3학년 1학기</Text>
-                    <Text marginTop={1} fontSize="smaller" fontWeight="600">이메일 : skkukim00@daum.net</Text>
-                    <Text marginTop={1} fontSize="smaller" fontWeight="600">생년월일 : 1999/07/27</Text>
-                    <Text marginTop={1} fontSize="smaller" fontWeight="600">연락처 : 010-1234-1398</Text>
+                    <Text marginTop={1} fontSize="smaller" fontWeight="600">이름 : {counselorApplicationStore.currentApplication.student.user.username}</Text>
+                    <Text marginTop={1} fontSize="smaller" fontWeight="600">학번 : {counselorApplicationStore.currentApplication.student.user.student_number}</Text>
+                    {/* 학년과 이메일 정보가 API에 없어서 구현 불가. */}
+                    {/* <Text marginTop={1} fontSize="smaller" fontWeight="600">학년 : {counselorApplicationStore.currentApplication.student.user.realname}</Text> */}
+                    {/* <Text marginTop={1} fontSize="smaller" fontWeight="600">이메일 : skkukim00@daum.net</Text> */}
+                    <Text marginTop={1} fontSize="smaller" fontWeight="600">생년월일 : {counselorApplicationStore.currentApplication.student.user.birth}</Text>
+                    <Text marginTop={1} fontSize="smaller" fontWeight="600">연락처 : {counselorApplicationStore.currentApplication.student.user.phone_number}</Text>
                 </VStack>
             </VStack>
         )
     })
 
     const CounselingTimeAdmin = observer(() => {
+
+        const isGreen = (key: string): boolean => {
+            return counselorApplicationStore.currentApplication.counseling_prefertimeslots.some(slot => slot.timeslot === key);
+        };
+
         return (
             <VStack style={{ alignItems: "flex-start", padding: "2rem", width: "50%" }}>
                 <Text fontSize="xl" fontWeight="600">희망 상담 시간</Text>
                 <Text style={{ textAlign: "start" }} fontSize="md">
                     학생이 지정한 희망 상담 시간을 확인하세요
                 </Text>
-
                 <TableContainer style={{ width: "100%" }}>
                     <Table colorScheme="gray" style={{ width: "60%", margin: "1rem" }} size='sm'>
                         <Thead>
@@ -131,19 +157,18 @@ const AdminPersonalApplicationCheckPage = observer(() => {
                             </Tr>
                         </Thead>
                         <Tbody>
-                            {[10, 11, 13, 14, 15, 16].map((value, index) => {
+                            {['1', '2', '3', '4', '5', '6'].map((time, timeIndex) => {
+                                const realTime = [10, 11, 13, 14, 15, 16];
                                 return <Tr>
-                                    <Td style={{ backgroundColor: "#D9D9D9" }}>{value}:00~{value + 1}:00</Td>
-                                    {/* 임시로 설정 */}
-                                    {[1, 2, 3, 4, 5].map((number, index) => {
-                                        if (number == 2 && value == 11 || number == 4 && value == 15)
-                                            return <Td style={{ backgroundColor: "#579f6e" }}></Td>;
-                                        else
-                                            return <Td style={{ backgroundColor: "white" }}></Td>;
+                                    <Td style={{ backgroundColor: "#D9D9D9" }}>{realTime[timeIndex]}:00~{realTime[timeIndex] + 1}:00</Td>
+                                    {['MON', 'TUE', 'WED', 'THU', 'FRI'].map((day, dayIndex) => {
+                                        const key = `${day}${time}`;
+                                        return <Td bg={isGreen(key) ? '#579f6e' : 'white'}></Td>
                                     })}
                                 </Tr>
                             })}
                         </Tbody>
+
                     </Table>
                 </TableContainer>
             </VStack >
@@ -170,7 +195,7 @@ const AdminPersonalApplicationCheckPage = observer(() => {
 
     return (
         <VStack style={{ width: "100%", paddingBottom: "10rem" }}>
-            <Appbar/>
+            <Appbar />
 
             <VStack style={{ width: "85%" }}>
                 <PageDescription />

@@ -32,9 +32,16 @@ const dateToKrLocale = (date: Date) => {
   });
 };
 
+const formattedTimeslot = (timeslot: string) => {
+  const day = timeslot.slice(0, 3);
+  const hour = parseInt(timeslot.slice(3)) + 9;
+  return `${day}, ${hour}시`
+};
+
 export {
   compareDateOnly,
   numToDateString,
   dateToKrLocaleWeekday,
   dateToKrLocale,
+  formattedTimeslot
 };

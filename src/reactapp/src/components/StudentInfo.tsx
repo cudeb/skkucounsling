@@ -1,15 +1,14 @@
 import { FC } from "react";
-import { StudentInfoType } from "../interface";
+import { UserInfoType } from "./pages/CounselingAdminPage/interface";
 import { Text, VStack } from "@chakra-ui/react";
 
 type StudentInfoProps = {
-  selectedStudent: StudentInfoType
+  studentInfo: UserInfoType;
 }
 
 const StudentInfo: FC<StudentInfoProps> = ({
-  selectedStudent
+  studentInfo,
 }) => {
-
   return (
     <VStack
       style={{
@@ -20,11 +19,10 @@ const StudentInfo: FC<StudentInfoProps> = ({
       }}
     >
       <Text fontWeight="bold">상담 학생 정보</Text>
-      <Text>학번 : {selectedStudent.studentId}</Text>
-      <Text>학년 : {selectedStudent.schoolYear}</Text>
-      <Text>이메일 : {selectedStudent.email}</Text>
-      <Text>생년월일 : {selectedStudent.dateOfBirth}</Text>
-      <Text>연락처 : {selectedStudent.phoneNumber}</Text>
+      <Text>학번 : {studentInfo.user.student_number}</Text>
+      <Text>학년 : {studentInfo.user.id % 4 + 1}</Text>
+      <Text>생년월일 : {studentInfo.user.birth}</Text>
+      <Text>연락처 : {studentInfo.user.phone_number}</Text>
     </VStack>
   );
 };

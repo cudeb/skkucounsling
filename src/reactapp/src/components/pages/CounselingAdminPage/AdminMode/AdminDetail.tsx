@@ -3,18 +3,19 @@ import StudentProfile from "../../../StudentProfile";
 import StudentInfo from "../../../StudentInfo";
 import StudentTable from "./AdminDetailInfo/StudentTable";
 import FeedbackTable from "./AdminDetailInfo/FeedbackTable";
-import { studentData } from "../StudentData";
-import { StudentInfoDefault } from "../../../../interface";
+import { ScheduleType, UserInfoType, UserInfoDefault } from "../interface";
 import { HStack, VStack } from "@chakra-ui/react";
 
 type AdminDetailProps = {
-  selectedId: string;
+  studentInfo: UserInfoType;
+  selectedSchedules: Array<ScheduleType>;
   selectedIndex: number;
   setSelectedIndex(e: number): void;
 }
 
 const AdminDetail: FC<AdminDetailProps> = ({
-  selectedId,
+  studentInfo,
+  selectedSchedules,
   selectedIndex,
   setSelectedIndex
 }) => {
@@ -33,12 +34,8 @@ const AdminDetail: FC<AdminDetailProps> = ({
         }}
         spacing="2rem"
       >
-        <StudentProfile
-          selectedStudent={studentData.find((student) => student.id === selectedId) ?? StudentInfoDefault}
-        />
-        <StudentInfo
-          selectedStudent={studentData.find((student) => student.id === selectedId) ?? StudentInfoDefault}
-        />
+        <StudentProfile studentName={studentInfo.user.username ?? ""} />
+        <StudentInfo studentInfo={studentInfo ?? UserInfoDefault} />
       </VStack>
       <VStack
         style={{
@@ -49,7 +46,8 @@ const AdminDetail: FC<AdminDetailProps> = ({
         spacing="10rem"
       >
         <StudentTable
-          selectedId={selectedId}
+          studentInfo={studentInfo ?? UserInfoDefault}
+          selectedSchedules={selectedSchedules}
           selectedIndex={selectedIndex}
           setSelectedIndex={setSelectedIndex}
         />
@@ -62,7 +60,7 @@ const AdminDetail: FC<AdminDetailProps> = ({
         }}
         spacing="10rem"
       >
-        <FeedbackTable selectedId={selectedId} />
+        <FeedbackTable selectedSchedules={selectedSchedules} />
       </VStack>
     </HStack>
   );
