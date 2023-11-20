@@ -93,7 +93,7 @@ const AdminPersonalApplicationCheckPage = observer(() => {
         return (
             <VStack style={{ alignItems: "center", padding: "2rem", width: "20%", backgroundColor: "white", marginRight: "5%" }}>
                 <img src="https://www.pngarts.com/files/10/Default-Profile-Picture-PNG-Download-Image.png" ></img>
-                <Text marginTop={5} fontSize="l" fontWeight="600">김성균</Text>
+                <Text marginTop={5} fontSize="l" fontWeight="600">{counselorApplicationStore.currentApplication.student.user.username}</Text>
                 {/* 신청서 다운로드 부분은 아직 구현하지 못했습니다. API를 콘솔에 찍어보면 string type로 나옵니다  */}
                 <Button onClick={() => console.log("임시")} size='sm' style={{ backgroundColor: "#D9D9D9" }}>
                     <img src="https://cdn.pixabay.com/photo/2016/06/15/14/54/download-1459070_1280.png" width="15%"></img>
@@ -123,8 +123,7 @@ const AdminPersonalApplicationCheckPage = observer(() => {
                     <Text marginTop={1} fontSize="smaller" fontWeight="600">이름 : {counselorApplicationStore.currentApplication.student.user.username}</Text>
                     <Text marginTop={1} fontSize="smaller" fontWeight="600">학번 : {counselorApplicationStore.currentApplication.student.user.student_number}</Text>
                     {/* 학년과 이메일 정보가 API에 없어서 구현 불가. */}
-                    {/* <Text marginTop={1} fontSize="smaller" fontWeight="600">학년 : {counselorApplicationStore.currentApplication.student.user.realname}</Text> */}
-                    {/* <Text marginTop={1} fontSize="smaller" fontWeight="600">이메일 : skkukim00@daum.net</Text> */}
+                    <Text marginTop={1} fontSize="smaller" fontWeight="600">이메일 : {counselorApplicationStore.currentApplication.student.user.email}</Text>
                     <Text marginTop={1} fontSize="smaller" fontWeight="600">생년월일 : {counselorApplicationStore.currentApplication.student.user.birth}</Text>
                     <Text marginTop={1} fontSize="smaller" fontWeight="600">연락처 : {counselorApplicationStore.currentApplication.student.user.phone_number}</Text>
                 </VStack>

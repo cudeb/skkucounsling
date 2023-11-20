@@ -6,6 +6,7 @@ export type ICounselingUser = {
     student_number: string,
     user_type: string,
     username: string,
+    email:string
 }
 
 export type ICounselingStudentDetail = {

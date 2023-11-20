@@ -18,6 +18,7 @@ class CounselorApplicationStore {
         student_number: "",
         user_type: "",
         username: "",
+        email: ""
       },
     },
     application_file: null,
