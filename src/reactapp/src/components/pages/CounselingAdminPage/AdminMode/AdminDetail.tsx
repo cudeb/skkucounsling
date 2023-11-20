@@ -20,12 +20,13 @@ const AdminDetail: FC<AdminDetailProps> = ({
   setSelectedIndex,
 }) => {
   return (
-    <HStack width="100%" gap="2rem" justify="center">
+    <HStack width="100%" gap="1rem" justify="center">
       <VStack
         style={{
           height: "30rem",
+          width:"20%",
           backgroundColor: "rgba(41, 41, 41, 0.1)",
-          padding: "2rem",
+          padding: "1rem",
         }}
         spacing="2rem"
       >
@@ -35,10 +36,10 @@ const AdminDetail: FC<AdminDetailProps> = ({
       <VStack
         style={{
           height: "30rem",
+          width:"50%",
           backgroundColor: "rgba(41, 41, 41, 0.1)",
           padding: "1rem",
         }}
-        spacing="10rem"
       >
         <StudentTable
           studentInfo={studentInfo ?? UserInfoDefault}
@@ -50,11 +51,10 @@ const AdminDetail: FC<AdminDetailProps> = ({
       <VStack
         style={{
           height: "30rem",
+          width:"30%",
           backgroundColor: "rgba(41, 41, 41, 0.1)",
           padding: "1rem",
-          flex: 1,
         }}
-        spacing="10rem"
       >
         <FeedbackTable selectedSchedules={selectedSchedules} />
       </VStack>

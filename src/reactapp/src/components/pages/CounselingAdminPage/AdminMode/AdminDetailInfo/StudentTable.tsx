@@ -25,64 +25,41 @@ const StudentTable: FC<StudentTableProps> = ({
   ];
 
   return (
-    <TableContainer overflowX="hidden">
-      <Table colorScheme="gray">
-        <Thead>
+    <TableContainer style={{ width:"100%", overflowY: 'scroll', maxHeight: '500px' }}>
+      <Table variant='simple' size='sm'>
+        <Thead
+        style={{ position: 'sticky', top: '0', zIndex: '1', backgroundColor: '#454545'}}>
           <Tr>
             {tableHeadArray.map((head, index) => (
-              <Th key={index} style={tableHeadStyle}>
-                <Center w="5rem" fontSize="sm">{head}</Center>
+              <Th key={index} fontSize="xs" style={{color:"white"}}>
+                {head}
               </Th>
             ))}
           </Tr>
         </Thead>
         <Tbody>
-          {selectedSchedules.map((schedule, index) => (
+        {selectedSchedules.map((schedule, index) => (
+          <>
             <Tr key={index}>
-              <Td style={tableBodyStyle}>
-                <Center w="5rem" fontSize="sm">
-                  {schedule.session_number}
-                </Center>
+              <Td  fontSize="xs" style={{ whiteSpace: 'pre-wrap' }}>
+              {schedule.session_number}
               </Td>
-              <Td style={tableBodyStyle}>
-                <Center w="5rem" fontSize="sm">
+              <Td  fontSize="xs" style={{ whiteSpace: 'pre-wrap' }}>
                   {studentInfo.user.username ?? ""}
-                </Center>
               </Td>
-              <Td style={tableBodyStyle}>
-                <Center w="5rem" fontSize="sm">
+              <Td  fontSize="xs" style={{ whiteSpace: 'pre-wrap' }}>
                   {schedule.session_date}
-                </Center>
               </Td>
-              <Td style={tableBodyStyle}>
-                <Center w="5rem" fontSize="sm">
+              <Td  fontSize="xs" style={{ whiteSpace: 'pre-wrap' }}>
                   {formattedTimeslot(schedule.session_timeslot)}
-                </Center>
               </Td>
-              <Td style={tableBodyStyle}>
-                <Center w="5rem" fontSize="sm">
+              <Td  fontSize="xs" style={{ whiteSpace: 'pre-wrap' }}>
                   {schedule.session_status === "Yet" ? "상담 전" : "상담 완료"}
-                </Center>
               </Td>
-              <Td style={tableBodyStyle}>
-                {schedule.session_status === "Done" && (
-                  <Center
-                    style={{
-                      cursor: "pointer",
-                      fontWeight: "bold",
-                    }}
-                    w="5rem"
-                    fontSize="sm"
-                    onClick={() => {
-                      setSelectedIndex(index);
-                      onOpen();
-                    }}
-                  >
-                    상세보기
-                  </Center>
-                )}
+              <Td  fontSize="xs" style={{ whiteSpace: 'pre-wrap' }}>
               </Td>
             </Tr>
+            </>
           ))}
         </Tbody>
       </Table>
@@ -93,7 +70,76 @@ const StudentTable: FC<StudentTableProps> = ({
         selectedSchedules={selectedSchedules}
         selectedIndex={selectedIndex}
       />
-    </TableContainer>
+    </TableContainer >
+    // <TableContainer overflowX="hidden">
+    //   <Table colorScheme="gray">
+    //     <Thead>
+    //       <Tr>
+    //         {tableHeadArray.map((head, index) => (
+    //           <Th key={index} style={tableHeadStyle}>
+    //             <Center w="5rem" fontSize="sm">{head}</Center>
+    //           </Th>
+    //         ))}
+    //       </Tr>
+    //     </Thead>
+    //     <Tbody>
+    //       {selectedSchedules.map((schedule, index) => (
+    //         <Tr key={index}>
+    //           <Td style={tableBodyStyle}>
+    //             <Center w="5rem" fontSize="sm">
+    //               {schedule.session_number}
+    //             </Center>
+    //           </Td>
+    //           <Td style={tableBodyStyle}>
+    //             <Center w="5rem" fontSize="sm">
+    //               {studentInfo.user.username ?? ""}
+    //             </Center>
+    //           </Td>
+    //           <Td style={tableBodyStyle}>
+    //             <Center w="5rem" fontSize="sm">
+    //               {schedule.session_date}
+    //             </Center>
+    //           </Td>
+    //           <Td style={tableBodyStyle}>
+    //             <Center w="5rem" fontSize="sm">
+    //               {formattedTimeslot(schedule.session_timeslot)}
+    //             </Center>
+    //           </Td>
+    //           <Td style={tableBodyStyle}>
+    //             <Center w="5rem" fontSize="sm">
+    //               {schedule.session_status === "Yet" ? "상담 전" : "상담 완료"}
+    //             </Center>
+    //           </Td>
+    //           <Td style={tableBodyStyle}>
+    //             {schedule.session_status === "Done" && (
+    //               <Center
+    //                 style={{
+    //                   cursor: "pointer",
+    //                   fontWeight: "bold",
+    //                 }}
+    //                 w="5rem"
+    //                 fontSize="sm"
+    //                 onClick={() => {
+    //                   setSelectedIndex(index);
+    //                   onOpen();
+    //                 }}
+    //               >
+    //                 상세보기
+    //               </Center>
+    //             )}
+    //           </Td>
+    //         </Tr>
+    //       ))}
+    //     </Tbody>
+    //   </Table>
+    //   <DetailedStatusModal
+    //     isOpen={isOpen}
+    //     onClose={onClose}
+    //     studentInfo={studentInfo}
+    //     selectedSchedules={selectedSchedules}
+    //     selectedIndex={selectedIndex}
+    //   />
+    // </TableContainer>
   );
 };
 

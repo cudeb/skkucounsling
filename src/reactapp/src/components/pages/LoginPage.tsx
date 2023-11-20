@@ -59,10 +59,11 @@ const LoginPage = observer(() => {
             style={{
               width: "7rem",
               height: "2rem",
+              marginRight:"1rem"
             }}
           />
           <Text fontSize="2xl" textColor="black" as="b">
-            SCGM 로그인
+          SKKUCounselingManager 로그인
           </Text>
         </HStack>
         <div

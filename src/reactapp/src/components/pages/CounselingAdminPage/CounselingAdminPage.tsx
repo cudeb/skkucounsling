@@ -5,7 +5,8 @@ import AdminMain from "./AdminMode/AdminMain";
 import AdminDetail from "./AdminMode/AdminDetail";
 import { counselorStore } from "../../../dataflow/store/counselor/CounselorStore";
 import { BasicInfoType, ScheduleType, UserInfoDefault } from "./interface";
-import { Text, VStack, Flex, Spacer } from "@chakra-ui/react";
+import { Text, VStack, HStack, Flex, Spacer, InputLeftElement, InputGroup, Input } from "@chakra-ui/react";
+import { SearchIcon } from "@chakra-ui/icons";
 
 const CounselingAdminPage = () => {
   const [isMainMode, setIsMainMode] = useState<boolean>(true);
@@ -63,31 +64,35 @@ const CounselingAdminPage = () => {
       <Appbar />
       <VStack
         style={{
-          width: "100%",
+          width: "80%",
           alignItems: "flex-start",
           gap: "2rem",
-          padding: "2rem 3rem",
+          padding: "1rem 0rem",
         }}
       >
         <Flex style={{ width: "100%" }}>
-          <Text fontSize="2xl">상담 관리 페이지</Text>
+          <VStack style={{ alignItems: "flex-start", width: "100%" }}>
+            <HStack style={{ alignItems: "flex-end"}}>
+              <Text fontSize="2xl" fontWeight="700">
+                상담 관리
+              </Text>
+              <Text fontSize="md">학생 별 개인 상담을 간편하게 관리하세요</Text>
+            </HStack>
+          </VStack>
           <Spacer />
           {isMainMode ? (
-            <input
-              style={{
-                width: "15rem",
-                padding: "0 1rem",
-                border: "1px solid #000000",
-              }}
-              type="text"
-              placeholder="학생 이름을 입력해주세요"
-              onChange={(e) => {
+            <InputGroup style={{ width: "20rem"}}>
+              <InputLeftElement pointerEvents='none'>
+                <SearchIcon/>
+              </InputLeftElement>
+              <Input type='text' placeholder='학생 이름을 입력해주세요'
+               onChange={(e) => {
                 setSearchName(e.target.value);
-              }}
-            />
+              }}/>
+            </InputGroup>
           ) : (
             <Text
-              style={{ cursor: "pointer" }}
+              style={{ width:"15rem", cursor: "pointer" }}
               fontSize="2xl"
               fontWeight="bold"
               onClick={() => {

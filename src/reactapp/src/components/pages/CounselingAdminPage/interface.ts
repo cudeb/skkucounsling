@@ -43,6 +43,7 @@ export type UserInfoType = {
     student_number: string;
     user_type: string;
     username: string;
+    email: string;
   };
 };
 
@@ -56,6 +57,7 @@ export const UserInfoDefault: UserInfoType = {
     student_number: "",
     user_type: "",
     username: "",
+    email:""
   },
 };
 

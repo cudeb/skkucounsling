@@ -1,9 +1,10 @@
-import { Button, Input, InputGroup, Text, VStack } from "@chakra-ui/react";
+import { Button, Input, HStack, Text, VStack } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
 import { signupStore } from "../../dataflow/store";
 import { SIGNUP_FIELD } from "../../dataflow/store/signup/SignupStore";
 import { useNavigate } from "react-router";
 import { useEffect } from "react";
+import IconSkku from "../../resources/ic_skku_sg.png";
 import { sign } from "crypto";
 import { issueCSRF } from "../../dataflow/remote/RemoteInstruct";
 
@@ -32,19 +33,37 @@ const SignupPage = observer(() => {
         alignItems: "center",
       }}
     >
+      <HStack
+          style={{
+            width: "50%",
+          }}
+        >
+          <img
+            src={IconSkku}
+            alt=""
+            style={{
+              width: "7rem",
+              height: "2rem",
+              marginRight:"1rem"
+            }}
+          />
+          <Text fontSize="2xl" textColor="black" as="b">
+          SKKUCounselingManager 회원가입
+          </Text>
+        </HStack>
+        <div
+          style={{
+            width: "50%",
+            backgroundColor: "#a1a1a1",
+            height: "1px",
+            margin: "2rem",
+          }}
+        />
       <VStack
         style={{
           width: "24rem",
         }}
       >
-        <Text
-          fontSize="3xl"
-          style={{
-            height: "3rem",
-          }}
-        >
-          회원가입
-        </Text>
         <Input
           fontSize="sm"
           placeholder="이메일"

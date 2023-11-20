@@ -97,14 +97,14 @@ const CounselorMainPage = () => {
           width: "100%",
           alignItems: "flex-start",
           gap: "2rem",
-          padding: "2rem 10rem",
+          padding: "2rem 15rem",
         }}
-      >
-        <Flex align="flex-end" gap={8}>
+      >      
+        <Flex align="flex-end" gap={5}>
           <Text fontSize="2xl" fontWeight="bold">
             상담 현황
           </Text>
-          <Text fontSize="lg">개인 상담 현황을 한 눈에 확인하세요</Text>
+          <Text fontSize="md">개인 상담 현황을 한 눈에 확인하세요</Text>
         </Flex>
         <HStack
           style={{
@@ -139,6 +139,7 @@ const CounselorMainPage = () => {
                   <Text
                     key={index}
                     fontSize="sm"
+                    style={{cursor:"pointer"}}
                     onClick={() => navigateToStudentDetail(line.id)}
                   >
                     • {line.username} 학생
@@ -151,6 +152,7 @@ const CounselorMainPage = () => {
                   <Text
                     key={index}
                     fontSize="sm"
+                    style={{cursor:"pointer"}}
                     onClick={() => navigateToStudentDetail(line.id)}
                   >
                     • {line.username} 학생
@@ -163,6 +165,7 @@ const CounselorMainPage = () => {
                   <Text
                     key={index}
                     fontSize="sm"
+                    style={{cursor:"pointer"}}
                     onClick={() => navigateToStudentDetail(line.id)}
                   >
                     • {line.username} 학생
