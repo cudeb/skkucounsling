@@ -110,7 +110,7 @@ const StudentCounselInfoModal = ({
           </VStack>
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="teal" size="lg" onClick={() => saveMemo()}>
+          <Button colorScheme="green" size="lg" onClick={() => saveMemo()}>
             저장
           </Button>
         </ModalFooter>

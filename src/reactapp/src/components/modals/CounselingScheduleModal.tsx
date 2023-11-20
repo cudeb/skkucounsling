@@ -7,37 +7,41 @@ import {
   ModalHeader,
   ModalOverlay,
   VStack,
-  Text
+  Text,
 } from "@chakra-ui/react";
+import { ICounselingSchedule } from "../../dataflow/interface/counseling";
 
 type CounselingScheduleProps = {
   isOpen: boolean;
   onClose(): void;
   date: number;
-}
+  counselings: ICounselingSchedule[];
+};
 
 const CounselingScheduleModal: FC<CounselingScheduleProps> = ({
   isOpen,
   onClose,
-  date
+  date,
+  counselings,
 }) => {
-
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
-      <ModalOverlay/>
+      <ModalOverlay />
       <ModalContent>
         <ModalHeader>
-          {date}/{date}(목) 진행 상담 목록입니다
+          {Math.floor(date / 100)}/{date % 100}(목) 진행 상담 목록입니다
         </ModalHeader>
-        <ModalCloseButton/>
+        <ModalCloseButton />
         <ModalBody>
           <VStack style={{ padding: "1rem" }}>
-            {[
-              {time: 11, student: "김율전", type: "10회기"},
-              {time: 11, student: "김율전", type: "10회기"},
-              {time: 11, student: "김율전", type: "10회기"},
-            ].map((schedule) => (
-              <Text>{schedule.time}:00 - {schedule.student} 학생 {schedule.type} 개인 상담</Text>
+            {counselings.map((schedule) => (
+              <Text>
+                {schedule.session_timeslot[3]}:00 -{" "}
+                {schedule.counseling?.student &&
+                  typeof schedule.counseling?.student === "object" &&
+                  schedule.counseling?.student?.user.username}
+                학생 개인 상담
+              </Text>
             ))}
           </VStack>
         </ModalBody>

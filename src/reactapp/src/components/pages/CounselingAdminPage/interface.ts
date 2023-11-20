@@ -1,25 +1,25 @@
 export type StudentInfoType = {
-  id: number,
-  name: string,
-  profileImg: string,
-  studentId: string,
-  schoolYear: string,
-  email: string,
-  dateOfBirth: string,
-  phoneNumber: string,
+  id: number;
+  name: string;
+  profileImg: string;
+  studentId: string;
+  schoolYear: string;
+  email: string;
+  dateOfBirth: string;
+  phoneNumber: string;
   counselingInfo?: Array<{
-    date: string,
-    time: number,
-    isCompleted: boolean,
-    appliedDate?: string,
-    confirmedDate?: string,
-    field?: string,
-    type?: string
-  }>,
+    date: string;
+    time: number;
+    isCompleted: boolean;
+    appliedDate?: string;
+    confirmedDate?: string;
+    field?: string;
+    type?: string;
+  }>;
   feedbackData?: Array<{
-    feedback: string,
-    isCompleted: boolean
-  }>
+    feedback: string;
+    isCompleted: boolean;
+  }>;
 };
 
 export const StudentInfoDefault: StudentInfoType = {
@@ -34,16 +34,16 @@ export const StudentInfoDefault: StudentInfoType = {
 };
 
 export type UserInfoType = {
-  id: number,
+  id: number;
   user: {
-    id: number,
-    birth: string,
-    phone_number: string,
-    realname: string,
-    student_number: string,
-    user_type: string,
-    username: string
-  }
+    id: number;
+    birth: string;
+    phone_number: string;
+    realname: string;
+    student_number: string;
+    user_type: string;
+    username: string;
+  };
 };
 
 export const UserInfoDefault: UserInfoType = {
@@ -55,21 +55,21 @@ export const UserInfoDefault: UserInfoType = {
     realname: "",
     student_number: "",
     user_type: "",
-    username: ""
-  }
+    username: "",
+  },
 };
 
 export type BasicInfoType = {
-  id: number,
-  student: UserInfoType,
-  counselor: UserInfoType,
+  id: number;
+  student: UserInfoType;
+  counselor: UserInfoType;
   counseling_application: {
-    id: number,
-    counseling_type: string,
-    application_file: string,
-    applied_at: string,
-    student: UserInfoType,
-  },
+    id: number;
+    counseling_type: string;
+    application_file: string;
+    applied_at: string;
+    student: UserInfoType;
+  };
 };
 
 export type DetailInfoType = {
@@ -87,10 +87,14 @@ export type DetailInfoType = {
 };
 
 export type ScheduleType = {
-  id: number,
-  counseling: number,
-  session_number: number,
-  session_date: string,
-  session_status: string,
-  session_timeslot: string
+  id: number;
+  counseling?: {
+    id: number;
+    student: UserInfoType | number;
+    counselor: UserInfoType | number;
+  };
+  session_number: number;
+  session_date: string;
+  session_status: string;
+  session_timeslot: string;
 };

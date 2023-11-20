@@ -30,7 +30,7 @@ const CounselingAdminPage = () => {
         setSchedules(toJS(counselorStore.schedules) || []);
         let scheduledArray: Array<ScheduleType> = [];
         schedules.forEach((schedule) => {
-          if (schedule.counseling === selectedId) {
+          if (schedule.counseling?.id === selectedId) {
             scheduledArray.push(schedule);
           }
         });

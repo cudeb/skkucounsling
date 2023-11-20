@@ -5,7 +5,20 @@ import Calendar, { DateInfo } from "../Calendar";
 import CounselingScheduleModal from "../modals/CounselingScheduleModal";
 import { counselorStore } from "../../dataflow/store/counselor/CounselorStore";
 import { BasicInfoType, DetailInfoType } from "./CounselingAdminPage/interface";
-import { VStack, HStack, Flex, Text, useDisclosure } from "@chakra-ui/react";
+import {
+  VStack,
+  HStack,
+  Flex,
+  Text,
+  useDisclosure,
+  Container,
+} from "@chakra-ui/react";
+import {
+  dateToKrLocale,
+  dateToKrLocaleWeekday,
+  numToDateString,
+} from "../../dataflow/DateFunc";
+import { ICounselingSchedule } from "../../dataflow/interface/counseling";
 
 const CounselorMainPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -15,6 +28,7 @@ const CounselorMainPage = () => {
     {}
   );
 
+  const [counselings, setCounselings] = useState<ICounselingSchedule[]>([]);
   useEffect(() => {
     const fetchInfoData = async () => {
       await counselorStore.fetchInfo(() => {
@@ -43,6 +57,8 @@ const CounselorMainPage = () => {
     fetchDetailData().then();
     fetchSchedule().then();
   }, []);
+
+  const [modalDate, setModalDate] = useState<number>(-1);
 
   const renderFilteredStudents = (typeNum: number): Array<string> => {
     let newSet: Set<string> = new Set();
@@ -127,14 +143,46 @@ const CounselorMainPage = () => {
                 ))}
               </VStack>
               <Text fontSize="xl" fontWeight="bold" color="#00953D">
-                다음 상담일: 11월 25일 (수) 11:00
+                다음 상담일:{" "}
+                {dateToKrLocaleWeekday(
+                  new Date(
+                    counselorStore.schedules.find(
+                      (schedule) => schedule.session_status === "Yet"
+                    )?.session_date || ""
+                  )
+                )}
               </Text>
             </VStack>
           </VStack>
-          <Calendar dayDetails={calendarInfo} />
+          <div
+            style={{
+              border: "1px solid #000000",
+            }}
+          >
+            <Calendar
+              dayDetails={calendarInfo}
+              onClickDate={(year, month, date) => {
+                const dateString = numToDateString(year, month, date);
+                if (calendarInfo[dateString]) {
+                  setModalDate(month * 100 + date);
+                  setCounselings(
+                    counselorStore.schedules.filter(
+                      (schedule) => schedule.session_date === dateString
+                    )
+                  );
+                  onOpen();
+                }
+              }}
+            />
+          </div>
         </HStack>
       </VStack>
-      <CounselingScheduleModal isOpen={isOpen} onClose={onClose} date={-1} />
+      <CounselingScheduleModal
+        isOpen={isOpen}
+        onClose={onClose}
+        date={modalDate}
+        counselings={counselings}
+      />
     </VStack>
   );
 };

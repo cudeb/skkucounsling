@@ -41,9 +41,7 @@ class StudentStore {
   };
 
   get readCurrentFeedback() {
-    return this.readFeedback(
-      this.mainModalSchedule?.counseling.toString() || ""
-    );
+    return this.readFeedback(this.mainModalSchedule?.session_date || "");
   }
 
   setMainModalSchedule = (schedule: ICounselingSchedule | null | number[]) => {

@@ -1,8 +1,10 @@
+import { UserInfoType } from "../../components/pages/CounselingAdminPage/interface";
+
 export type ICounselingStudent = {
   id: number;
   counseling_application: ICounselingApplication;
-  student: number;
-  counselor: number;
+  student: UserInfoType | number;
+  counselor: UserInfoType | number;
 };
 
 export type ICounselingStudentSchedule = {
@@ -23,7 +25,10 @@ export type ICounselingApplication = {
 
 export type ICounselingSchedule = {
   id: number;
-  counseling: number;
+  counseling?: {
+    student: UserInfoType | number;
+    counselor: UserInfoType | number;
+  };
   session_number: number;
   session_date: string;
   session_timeslot: string;
