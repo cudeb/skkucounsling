@@ -5,16 +5,8 @@ import Calendar, { DateInfo } from "../Calendar";
 import CounselingScheduleModal from "../modals/CounselingScheduleModal";
 import { counselorStore } from "../../dataflow/store/counselor/CounselorStore";
 import { BasicInfoType, DetailInfoType } from "./CounselingAdminPage/interface";
+import { VStack, HStack, Flex, Text, useDisclosure } from "@chakra-ui/react";
 import {
-  VStack,
-  HStack,
-  Flex,
-  Text,
-  useDisclosure,
-  Container,
-} from "@chakra-ui/react";
-import {
-  dateToKrLocale,
   dateToKrLocaleWeekday,
   numToDateString,
 } from "../../dataflow/DateFunc";
@@ -28,6 +20,12 @@ const CounselorMainPage = () => {
   const [calendarInfo, setCalendarInfo] = useState<{ [key: string]: DateInfo }>(
     {}
   );
+
+  const navigate = useNavigate();
+
+  const navigateToStudentDetail = (id: number) => {
+    navigate("/admin/manageCounseling?id=" + id);
+  };
 
   const [counselings, setCounselings] = useState<ICounselingSchedule[]>([]);
   useEffect(() => {
@@ -58,11 +56,6 @@ const CounselorMainPage = () => {
     fetchDetailData().then();
     fetchSchedule().then();
   }, []);
-  const navigate = useNavigate();
-
-  const navigateToStudentDetail = (id: number) => {
-    navigate("/admin/manageCounseling?id=" + id);
-  };
 
   const [modalDate, setModalDate] = useState<number>(-1);
 
@@ -99,7 +92,7 @@ const CounselorMainPage = () => {
           gap: "2rem",
           padding: "2rem 15rem",
         }}
-      >      
+      >
         <Flex align="flex-end" gap={5}>
           <Text fontSize="2xl" fontWeight="bold">
             상담 현황
@@ -139,7 +132,7 @@ const CounselorMainPage = () => {
                   <Text
                     key={index}
                     fontSize="sm"
-                    style={{cursor:"pointer"}}
+                    style={{ cursor: "pointer" }}
                     onClick={() => navigateToStudentDetail(line.id)}
                   >
                     • {line.username} 학생
@@ -152,7 +145,7 @@ const CounselorMainPage = () => {
                   <Text
                     key={index}
                     fontSize="sm"
-                    style={{cursor:"pointer"}}
+                    style={{ cursor: "pointer" }}
                     onClick={() => navigateToStudentDetail(line.id)}
                   >
                     • {line.username} 학생
@@ -165,7 +158,7 @@ const CounselorMainPage = () => {
                   <Text
                     key={index}
                     fontSize="sm"
-                    style={{cursor:"pointer"}}
+                    style={{ cursor: "pointer" }}
                     onClick={() => navigateToStudentDetail(line.id)}
                   >
                     • {line.username} 학생
@@ -173,6 +166,14 @@ const CounselorMainPage = () => {
                 ))}
               </VStack>
               <Text fontSize="xl" fontWeight="bold" color="#00953D">
+                다음 상담일:{" "}
+                {dateToKrLocaleWeekday(
+                  new Date(
+                    counselorStore.schedules.find(
+                      (schedule) => schedule.session_status === "Yet"
+                    )?.session_date || ""
+                  )
+                )}
                 다음 상담일:{" "}
                 {dateToKrLocaleWeekday(
                   new Date(
@@ -205,8 +206,35 @@ const CounselorMainPage = () => {
               }}
             />
           </div>
+          <div
+            style={{
+              border: "1px solid #000000",
+            }}
+          >
+            <Calendar
+              dayDetails={calendarInfo}
+              onClickDate={(year, month, date) => {
+                const dateString = numToDateString(year, month, date);
+                if (calendarInfo[dateString]) {
+                  setModalDate(month * 100 + date);
+                  setCounselings(
+                    counselorStore.schedules.filter(
+                      (schedule) => schedule.session_date === dateString
+                    )
+                  );
+                  onOpen();
+                }
+              }}
+            />
+          </div>
         </HStack>
       </VStack>
+      <CounselingScheduleModal
+        isOpen={isOpen}
+        onClose={onClose}
+        date={modalDate}
+        counselings={counselings}
+      />
       <CounselingScheduleModal
         isOpen={isOpen}
         onClose={onClose}

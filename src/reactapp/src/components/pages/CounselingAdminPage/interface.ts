@@ -57,7 +57,7 @@ export const UserInfoDefault: UserInfoType = {
     student_number: "",
     user_type: "",
     username: "",
-    email:""
+    email: "",
   },
 };
 
