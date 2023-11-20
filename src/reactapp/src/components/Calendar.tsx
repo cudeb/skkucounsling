@@ -72,7 +72,7 @@ const CalendarDate = ({
         height: "4rem",
         overflow: "hidden",
         gap: "0",
-        cursor:"pointer"
+        cursor: "pointer",
       }}
     >
       <div>
@@ -114,9 +114,9 @@ const CalendarDate = ({
           top: "-4rem",
         }}
       >
-        {info?.task === "예정" ? (
+        {info?.task === "진행" ? (
           <ItemCheck />
-        ) : info?.task === "진행" ? (
+        ) : info?.task === "예정" ? (
           <ItemClick />
         ) : info?.task === "심리" ? (
           <ItemDocument />

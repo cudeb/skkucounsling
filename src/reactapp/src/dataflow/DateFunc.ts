@@ -11,6 +11,14 @@ const numToDateString = (year: number, month: number, day: number) => {
   )}`;
 };
 
+const stringToDate = (date: string) => {
+  return new Date(date);
+};
+
+const stringToKrString = (date: string) => {
+  return dateToKrLocale(stringToDate(date));
+};
+
 const dateToKrLocaleWeekday = (date: Date) => {
   return date.toLocaleDateString(
     //KR
@@ -35,7 +43,7 @@ const dateToKrLocale = (date: Date) => {
 const formattedTimeslot = (timeslot: string) => {
   const day = timeslot.slice(0, 3);
   const hour = parseInt(timeslot.slice(3)) + 9;
-  return `${day}, ${hour}시`
+  return `${day}, ${hour}시`;
 };
 
 export {
@@ -43,5 +51,7 @@ export {
   numToDateString,
   dateToKrLocaleWeekday,
   dateToKrLocale,
-  formattedTimeslot
+  formattedTimeslot,
+  stringToDate,
+  stringToKrString,
 };

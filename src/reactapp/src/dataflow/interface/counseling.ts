@@ -1,25 +1,42 @@
 export type ICounselingStudent = {
-  id: number,
-  counseling_application: ICounselingApplication,
-  student: number,
-  counselor: number,
+  id: number;
+  counseling_application: ICounselingApplication;
+  student: number;
+  counselor: number;
+};
+
+export type ICounselingStudentSchedule = {
+  id: number;
+  counseling: number;
+  session_date: string;
+  session_number: number;
+  session_status: string;
 };
 
 export type ICounselingApplication = {
-  id: number,
-  student: number,
-  application_file: string | null,
-  applied_at: string,
-  counseling_type: string,
+  id: number;
+  student: number;
+  application_file: string | null;
+  applied_at: string;
+  counseling_type: string;
 };
 
 export type ICounselingSchedule = {
-  id: number,
-  counseling: number,
-  session_number: number,
-  session_date: string,
-  session_timeslot: string,
-  session_status: string,
+  id: number;
+  counseling: number;
+  session_number: number;
+  session_date: string;
+  session_timeslot: string;
+  session_status: string;
+};
+
+export type ICounselingStudentStatus = {
+  last_schedule: ICounselingSchedule;
+  next_schedule: ICounselingSchedule;
+  date_next: string;
+  done_count: number;
+  upcoming_count: number;
+  absence_count: number;
 };
 
 export interface IApplicationForm {

@@ -13,25 +13,31 @@ import {
   Textarea,
   VStack,
 } from "@chakra-ui/react";
-import { ICounselingStudent } from "../../dataflow/interface/counseling";
-import { useState } from "react";
+import {
+  ICounselingSchedule,
+  ICounselingStudent,
+} from "../../dataflow/interface/counseling";
+import { useEffect, useState } from "react";
 import { dateToKrLocaleWeekday } from "../../dataflow/DateFunc";
 import { CloseIcon } from "@chakra-ui/icons";
+import { studentStore } from "../../dataflow/store/student/StudentStore";
 
 const StudentCounselInfoModal = ({
   counsel,
   time,
   isOpen,
+  feedback,
   onClose,
   onSave,
 }: {
-  counsel?: ICounselingStudent;
+  counsel?: ICounselingSchedule;
+  feedback?: string;
   time?: Date;
   isOpen: boolean;
   onSave: (memo: string) => void;
   onClose: () => void;
 }) => {
-  let [contents, setContents] = useState<string>("");
+  let [contents, setContents] = useState<string>(feedback || "");
 
   const saveMemo = () => {
     onSave(contents);
@@ -86,6 +92,7 @@ const StudentCounselInfoModal = ({
                 borderRadius: "1rem",
               }}
               onChange={(e) => setContents(e.target.value)}
+              value={contents}
             ></Textarea>
 
             <Text fontSize="md" fontWeight="600">

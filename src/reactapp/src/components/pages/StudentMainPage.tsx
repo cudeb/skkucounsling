@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { studentStore } from "../../dataflow/store/student/StudentStore";
 import { useNavigate } from "react-router";
 import StudentCounselInfoModal from "../modals/StudentCounselInfoModal";
+import { stringToKrString } from "../../dataflow/DateFunc";
 
 const TaskAttendancyOerview = observer(() => {
   return (
@@ -32,16 +33,26 @@ const TaskAttendancyOerview = observer(() => {
           padding: "1rem",
         }}
       >
-        <Text as="b" color="#2788DD">
-          진행한 상담 횟수: {1}회
-        </Text>
-        <Text as="b">잔여 상담 횟수 : {9}회</Text>
-        <Text color="#f35359" as="b">
-          불참 횟수: {0}회
-        </Text>
-        <Text fontSize="sm" color="#f35359" as="b">
-          *2회 무단 불참시 상담이 종료됩니다
-        </Text>
+        {studentStore.studentInfo ? (
+          <>
+            <Text as="b" color="#2788DD">
+              진행한 상담 횟수: {studentStore.studentInfo.done_count}회
+            </Text>
+            <Text as="b">
+              잔여 상담 횟수 : {studentStore.studentInfo.upcoming_count}회
+            </Text>
+            <Text color="#f35359" as="b">
+              불참 횟수: {studentStore.studentInfo.absence_count}회
+            </Text>
+            <Text fontSize="sm" color="#f35359" as="b">
+              *2회 무단 불참시 상담이 종료됩니다
+            </Text>
+          </>
+        ) : (
+          <>
+            <Text as="b">진행중인 상담이 없습니다</Text>
+          </>
+        )}
       </VStack>
     </VStack>
   );
@@ -69,11 +80,28 @@ const TaskPendingOerview = observer(() => {
           padding: "1rem",
         }}
       >
-        <Text as="b">개인상담 10회기</Text>
-        <Text as="b">상담 시작일: {`10월 19일 (목)`}</Text>
-        <Text color="#00953d" as="b">
-          다음 상담일: {`10월 26일 (목)`}
-        </Text>
+        {studentStore.studentInfo ? (
+          <>
+            <Text as="b">개인상담</Text>
+            <Text as="b">
+              상담 시작일:
+              {stringToKrString(
+                studentStore.studentInfo.last_schedule.session_date
+              )}
+            </Text>
+            <Text color="#00953d" as="b">
+              다음 상담일:
+              {stringToKrString(
+                studentStore.studentInfo.next_schedule?.session_date ||
+                  "2023-11-20"
+              )}
+            </Text>
+          </>
+        ) : (
+          <>
+            <Text as="b">진행중인 상담이 없습니다</Text>
+          </>
+        )}
       </VStack>
     </VStack>
   );
@@ -159,7 +187,7 @@ const StudentMainPage = observer(() => {
         width: "100%",
       }}
     >
-      <Appbar/>
+      <Appbar />
       <HStack
         style={{
           alignItems: "flex-start",
@@ -171,6 +199,7 @@ const StudentMainPage = observer(() => {
       </HStack>
       <StudentCounselInfoModal
         isOpen={isModalOpen}
+        feedback={studentStore.readCurrentFeedback}
         onClose={() => {
           studentStore.setMainModalSchedule(null);
           openModal(false);
@@ -178,7 +207,10 @@ const StudentMainPage = observer(() => {
         counsel={studentStore.mainModalSchedule}
         time={studentStore.mainModalScheduleDate}
         onSave={function (memo: string): void {
-          //throw new Error("Function not implemented.");
+          studentStore.setFeedback(
+            memo,
+            studentStore.mainModalSchedule?.session_date || ""
+          );
         }}
       />
     </VStack>

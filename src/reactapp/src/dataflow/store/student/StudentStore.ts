@@ -1,20 +1,50 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, computed } from "mobx";
 import { remote } from "../../remote/RemoteSource";
-import { ICounselingStudent } from "../../interface/counseling";
+import {
+  ICounselingSchedule,
+  ICounselingStudent,
+  ICounselingStudentStatus,
+} from "../../interface/counseling";
 import { DateInfo } from "../../../components/Calendar";
 import { compareDateOnly, numToDateString } from "../../DateFunc";
 
 class StudentStore {
-  schedules: ICounselingStudent[] = [];
+  schedules: ICounselingSchedule[] = [];
   calendarSchedule: { [key: string]: DateInfo } = {};
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {
+      readCurrentFeedback: computed,
+    });
   }
 
-  mainModalSchedule?: ICounselingStudent;
+  /**
+   * 진행중인, 출결 표시를 위한 정보
+   */
+  studentInfo?: ICounselingStudentStatus = undefined;
+
+  /**
+   * 모달에 띄울 상담 정보
+   */
+  mainModalSchedule?: ICounselingSchedule;
   mainModalScheduleDate?: Date;
 
-  setMainModalSchedule = (schedule: ICounselingStudent | null | number[]) => {
+  counselingFeedback: { [key: string]: string } = {};
+
+  setFeedback = (feedback: string, date: string) => {
+    if (feedback.trim()) this.counselingFeedback[date] = feedback;
+  };
+
+  readFeedback = (date: string) => {
+    return this.counselingFeedback[date] || "";
+  };
+
+  get readCurrentFeedback() {
+    return this.readFeedback(
+      this.mainModalSchedule?.counseling.toString() || ""
+    );
+  }
+
+  setMainModalSchedule = (schedule: ICounselingSchedule | null | number[]) => {
     if (!schedule) {
       this.mainModalSchedule = undefined;
       this.mainModalScheduleDate = undefined;
@@ -24,10 +54,8 @@ class StudentStore {
       const [year, month, day] = schedule;
       const scheduleItem = this.schedules.find(
         (s) =>
-          compareDateOnly(
-            s.counseling_application.applied_at,
-            numToDateString(year, month, day)
-          ) === 0
+          compareDateOnly(s.session_date, numToDateString(year, month, day)) ===
+          0
       );
       if (scheduleItem) {
         this.setMainModalSchedule(scheduleItem);
@@ -35,19 +63,16 @@ class StudentStore {
       return;
     }
     this.mainModalSchedule = schedule;
-    this.mainModalScheduleDate = new Date(
-      schedule.counseling_application.applied_at
-    );
+    this.mainModalScheduleDate = new Date(schedule.session_date);
   };
 
   fetchSchedule = () => {
     remote
-      .get("counseling/info-student/")
+      .get("counseling/schedule-student/")
       .onSuccess((json: any) => {
-        //todo: Case the json and store in this object.
-        console.log("fetch success");
-        const schedules: ICounselingStudent[] = json.counseling;
+        const schedules: ICounselingSchedule[] = json.counseling_schedule;
         this.schedules = schedules;
+        this.studentInfo = json;
 
         this.processSchedule();
       })
@@ -59,13 +84,17 @@ class StudentStore {
 
   processSchedule = () => {
     let schedule: { [key: string]: DateInfo } = {};
-    const application_schedule = studentStore.schedules.map((schedule) => {
-      return schedule.counseling_application.applied_at;
-    });
-    application_schedule.forEach((date) => {
+    this.schedules.forEach((session) => {
       //extract only xxxx-xx-xx
-      const date_only = date.split("T")[0];
-      schedule[date_only] = { task: "심리" };
+      const date_only = session.session_date.split("T")[0];
+      schedule[date_only] = {
+        task:
+          session.session_status === "Yet"
+            ? "예정"
+            : session.session_status === "Done"
+            ? "진행"
+            : "심리",
+      };
     });
     this.calendarSchedule = schedule;
   };
