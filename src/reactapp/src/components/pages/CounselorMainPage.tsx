@@ -174,14 +174,6 @@ const CounselorMainPage = () => {
                     )?.session_date || ""
                   )
                 )}
-                다음 상담일:{" "}
-                {dateToKrLocaleWeekday(
-                  new Date(
-                    counselorStore.schedules.find(
-                      (schedule) => schedule.session_status === "Yet"
-                    )?.session_date || ""
-                  )
-                )}
               </Text>
             </VStack>
           </VStack>
@@ -206,35 +198,8 @@ const CounselorMainPage = () => {
               }}
             />
           </div>
-          <div
-            style={{
-              border: "1px solid #000000",
-            }}
-          >
-            <Calendar
-              dayDetails={calendarInfo}
-              onClickDate={(year, month, date) => {
-                const dateString = numToDateString(year, month, date);
-                if (calendarInfo[dateString]) {
-                  setModalDate(month * 100 + date);
-                  setCounselings(
-                    counselorStore.schedules.filter(
-                      (schedule) => schedule.session_date === dateString
-                    )
-                  );
-                  onOpen();
-                }
-              }}
-            />
-          </div>
         </HStack>
       </VStack>
-      <CounselingScheduleModal
-        isOpen={isOpen}
-        onClose={onClose}
-        date={modalDate}
-        counselings={counselings}
-      />
       <CounselingScheduleModal
         isOpen={isOpen}
         onClose={onClose}

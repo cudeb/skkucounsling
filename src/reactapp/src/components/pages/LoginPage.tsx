@@ -18,7 +18,7 @@ const LoginPage = observer(() => {
         if (cookieManager.readCookie(ACCOUNT_TYPE) === "s")
           navigation("/student/home");
         else navigation("/admin/home");
-      }, 1000);
+      }, 2000);
     }
 
     if (loginStore.errorMsg) {
@@ -59,11 +59,11 @@ const LoginPage = observer(() => {
             style={{
               width: "7rem",
               height: "2rem",
-              marginRight:"1rem"
+              marginRight: "1rem",
             }}
           />
           <Text fontSize="2xl" textColor="black" as="b">
-          SKKUCounselingManager 로그인
+            SKKUCounselingManager 로그인
           </Text>
         </HStack>
         <div
