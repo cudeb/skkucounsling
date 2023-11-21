@@ -16,7 +16,7 @@ class CounselorApplicationStore {
     session_timeslot: "",
   };
 
-  fetchApplicationApproval = () => {
+  postApplicationApproval = () => {
     remote
       .post("counseling/application-approval/")
       .addBody(this.applicationApproval)

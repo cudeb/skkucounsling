@@ -60,7 +60,7 @@ const AdminPersonalApplicationCheckPage = observer(() => {
     counselorApplicationStore.applicationApproval.session_date = date;
     counselorApplicationStore.applicationApproval.session_timeslot = timeSlot;
     setIsAcceptModalOpen(false);
-    counselorApplicationStore.fetchApplicationApproval();
+    counselorApplicationStore.postApplicationApproval();
     navigation("/admin/applicationCheck");
   };
 
@@ -77,7 +77,6 @@ const AdminPersonalApplicationCheckPage = observer(() => {
   // 신청서 양식 다운로드
   const handleDownload = (path: string, saveName: string) => {
     // 파일을 읽어오는 동기 함수
-    console.log(counselorApplicationStore.currentApplication.application_file);
     const loadFile = (url: string) => {
       const xhr = new XMLHttpRequest();
       xhr.open("GET", url, false);
@@ -143,7 +142,7 @@ const AdminPersonalApplicationCheckPage = observer(() => {
       >
         <img src="https://www.pngarts.com/files/10/Default-Profile-Picture-PNG-Download-Image.png"></img>
         <Text marginTop={5} fontSize="l" fontWeight="600">
-          {counselorApplicationStore.currentApplication.student.user.username}
+          {counselorApplicationStore.currentApplication.student.user.realname}
         </Text>
         <Button
           onClick={() =>
@@ -219,6 +218,7 @@ const AdminPersonalApplicationCheckPage = observer(() => {
                 .student_number
             }
           </Text>
+          {/* 학년과 이메일 정보가 API에 없어서 구현 불가. */}
           <Text marginTop={1} fontSize="smaller" fontWeight="600">
             이메일 :{" "}
             {counselorApplicationStore.currentApplication.student.user.email}
