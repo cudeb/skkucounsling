@@ -379,13 +379,11 @@ class CounselingApplicationApproval(APIView):
         
         # 요청에서 데이터 미리 받아오기
         application_id = request.data.get('application_id')
-        test_date = request.data.get('test_date')
-        test_timeslot = request.data.get('test_timeslot')
         session_date = request.data.get('session_date')
         session_timeslot = request.data.get('session_timeslot')
         
         # 요청에서 데이터 유무 체크
-        if application_id is None or test_date is None or test_timeslot is None \
+        if application_id is None \
         or session_date is None or session_timeslot is None:
             res['error'] = "잘못된 요청입니다."
             return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
@@ -407,6 +405,11 @@ class CounselingApplicationApproval(APIView):
         counseling.save()
 
         # 심리검사 객체 생성
+        test_date = counseling_application.test_date
+        pre_test_timeslot = counseling_application.test_timeslot
+        date_dict = {0:'MON',1:'TUE',2:'WED',3:'THU',4:'FRI',5:'SAT',6:'SUN'}
+        timeslotDic = {'10':'1','11':'2','13':'3','14':'4','15':'5','16':'6'}
+        test_timeslot = date_dict[test_date.weekday()] + timeslotDic[pre_test_timeslot]
         counseling_test_schedule = \
             CounselingTestSchedule(
                 counseling=counseling,
