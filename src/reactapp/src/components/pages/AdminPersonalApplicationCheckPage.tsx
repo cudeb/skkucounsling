@@ -71,7 +71,11 @@ const AdminPersonalApplicationCheckPage = observer(() => {
   };
 
   const closeRefuseModal = () => {
+    counselorApplicationStore.applicationRefuse.application_id = extractIdFromUrl();
     setIsRefuseModalOpen(false);
+    counselorApplicationStore.postApplicationRefuse();
+    navigation("/admin/applicationCheck");
+    alert("신청서가 거절되었습니다.");
   };
 
   // 신청서 양식 다운로드

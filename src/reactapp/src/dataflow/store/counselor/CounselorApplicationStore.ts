@@ -16,12 +16,32 @@ class CounselorApplicationStore {
     session_timeslot: "",
   };
 
+  applicationRefuse: {
+    application_id: number;
+  }={
+    application_id:0
+  }
+
   postApplicationApproval = () => {
     remote
       .post("counseling/application-approval/")
       .addBody(this.applicationApproval)
       .onSuccess((json: any) => {
         console.log(json);
+      })
+      .onFailed((code: number, msg?: string) => {
+        console.log(code);
+        if (msg) console.log(msg);
+      })
+      .send();
+  };
+
+  postApplicationRefuse = () => {
+    remote
+      .post("counseling/application-denial/")
+      .addBody(this.applicationRefuse)
+      .onSuccess((json: any) => {
+        // console.log(json);
       })
       .onFailed((code: number, msg?: string) => {
         console.log(code);
