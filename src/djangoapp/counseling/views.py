@@ -225,6 +225,28 @@ class CounselingScheduleCounselor(APIView):
         counseling_schedule = CounselingSchedule.objects.filter(counseling__counselor=counselor)
         res['counseling_schedule'] = CounselingScheduleSerializer(counseling_schedule, many=True).data
         return Response(res, status=status.HTTP_200_OK)
+
+# class CounselingScheduleStudentForCounselor(APIView):
+#     # 상담사 입장에서 특정 학생의 스케줄 전체 조회
+#     def get(self, request, *args, **kwargs):
+#         user = request.user
+#         res = {}
+#         if not user.is_authenticated:
+#             res['error'] = "로그인이 필요합니다."
+#             return Response(res, status=status.HTTP_401_UNAUTHORIZED)
+#         if user.user_type != 'counselor':
+#             res['error'] = "상담사가 아닙니다."
+#             return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
+        
+#         counselor = Counselor.objects.get(user=user)
+
+#         student_id = request.GET.get('student_id')
+#         student = Student.objects.get(id=student_id)
+
+#         student_schedule
+#         counseling_schedule = CounselingSchedule.objects.filter(counseling__counselor=counselor)
+#         res['counseling_schedule'] = CounselingScheduleSerializer(counseling_schedule, many=True).data
+#         return Response(res, status=status.HTTP_200_OK)
         
     
 class CounselingJournalCounselor(APIView):
@@ -552,14 +574,14 @@ class CounselingApplicationFile(APIView):
             counseling_application = CounselingApplication.objects.get(id=application_id)
             
         except:
-            return Response({"error" : "올바르지 않은 application_id 입니다."})
+            return Response({"error" : "올바르지 않은 application_id 입니다."}, status=status.HTTP_406_NOT_ACCEPTABLE)
         
         application_file = counseling_application.application_file
         
         try:
             open(str(application_file))
         except:
-            return Response({"error" : "파일이 존재하지 않습니다."})
+            return Response({"error" : "파일이 존재하지 않습니다."}, status=status.HTTP_406_NOT_ACCEPTABLE)
             
         
         return FileResponse(open(str(application_file), 'rb'), status=status.HTTP_200_OK)
