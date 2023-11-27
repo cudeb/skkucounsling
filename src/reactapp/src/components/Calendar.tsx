@@ -135,6 +135,8 @@ const Calendar = ({
   initDate,
   onClickDate,
   dateSelectable,
+  clickOnlySelectable,
+  passedDateSelectable,
 }: {
   dayDetails?: Record<string, DateInfo>;
   initMonth?: number;
@@ -142,6 +144,8 @@ const Calendar = ({
   initDate?: number;
   onClickDate?: (year: number, month: number, date: number) => void;
   dateSelectable?: boolean;
+  passedDateSelectable?: boolean;
+  clickOnlySelectable?: boolean;
 }) => {
   let [year, setYear] = useState(initYear || new Date().getFullYear());
   let [month, setMonth] = useState(initMonth || new Date().getMonth() + 1);
@@ -168,6 +172,11 @@ const Calendar = ({
 
   const isClickable = (year: number, month: number, date: number) => {
     if (dateSelectable !== true) return false;
+    if (
+      passedDateSelectable !== true &&
+      new Date() > new Date(year, month - 1, date)
+    )
+      return false;
     if (getDayDetail(year, month, date)) return false;
     return true;
   };
@@ -180,8 +189,10 @@ const Calendar = ({
     }
     if (
       !(
-        dateSelectable &&
-        getDayDetail(dateItem.year, dateItem.month, dateItem.day)
+        (dateSelectable &&
+          getDayDetail(dateItem.year, dateItem.month, dateItem.day)) ||
+        (clickOnlySelectable &&
+          !isClickable(dateItem.year, dateItem.month, dateItem.day))
       )
     )
       onClickDate?.(dateItem.year, dateItem.month, dateItem.day);

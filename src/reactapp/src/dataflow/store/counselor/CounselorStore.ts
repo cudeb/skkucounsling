@@ -1,6 +1,10 @@
 import { makeAutoObservable } from "mobx";
 import { remote } from "../../remote/RemoteSource";
-import { BasicInfoType, DetailInfoType, ScheduleType } from "../../../components/pages/CounselingAdminPage/interface";
+import {
+  BasicInfoType,
+  DetailInfoType,
+  ScheduleType,
+} from "../../../components/pages/CounselingAdminPage/interface";
 
 class CounselorStore {
   basicInfo: Array<BasicInfoType> = [];
@@ -49,7 +53,7 @@ class CounselorStore {
         if (msg) alert(code + " " + msg);
       })
       .send();
-  }
+  };
 
   fetchSchedule = (afterSuccessCallbackSchedule: () => void) => {
     this.afterSuccessCallbackSchedule = afterSuccessCallbackSchedule;
@@ -68,7 +72,10 @@ class CounselorStore {
       .send();
   };
 
-  fetchJournal = (schedule_id: number, afterSuccessCallbackJournal: () => void) => {
+  fetchJournal = (
+    schedule_id: number,
+    afterSuccessCallbackJournal: () => void
+  ) => {
     this.afterSuccessCallbackJournal = afterSuccessCallbackJournal;
     remote
       .get("counseling/journal-counselor")
@@ -97,7 +104,7 @@ class CounselorStore {
         if (msg) alert(code + " " + msg);
       })
       .send();
-  }
+  };
 }
 
 export const counselorStore = new CounselorStore();
