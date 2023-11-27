@@ -23,4 +23,7 @@ urlpatterns = [
     path('application-formal-approval/',views.CounselingApplicationFormalApproval.as_view(),name='application-formal-approval'),
     path('application-approval/',views.CounselingApplicationApproval.as_view(),name='application-approval'),
     path('application-denial/',views.CounselingApplicationDenial.as_view(),name='application-denial'),
+    
+    # 공통
+    path('application-file/',views.CounselingApplicationFile.as_view(),name='application-file'),
 ]

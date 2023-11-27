@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.http import FileResponse
 from .models import Counseling, CounselingApplication, CounselingJournals, CounselingPrefertimeslot, CounselingSchedule, CounselingTestSchedule, CounselingPreferfield
 from common.models import User, Student, Counselor
 from common.serializers import StudentSerializer
@@ -543,3 +544,22 @@ class CounselingScheduleUpdate(APIView):
 
         return Response(res, status=status.HTTP_200_OK)
     
+
+class CounselingApplicationFile(APIView):
+    def get(self, request, *args, **kwargs):
+        application_id = request.GET.get('application_id')
+        try:
+            counseling_application = CounselingApplication.objects.get(id=application_id)
+            
+        except:
+            return Response({"error" : "올바르지 않은 application_id 입니다."})
+        
+        application_file = counseling_application.application_file
+        
+        try:
+            open(str(application_file))
+        except:
+            return Response({"error" : "파일이 존재하지 않습니다."})
+            
+        
+        return FileResponse(open(str(application_file), 'rb'), status=status.HTTP_200_OK)
