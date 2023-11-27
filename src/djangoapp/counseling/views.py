@@ -294,7 +294,7 @@ class CounselingApplications(APIView):
            res['error'] = "상담사가 아닙니다."
            return Response(res, status=status.HTTP_406_NOT_ACCEPTABLE)
        
-        counseling_applications = CounselingApplication.objects.all().values('id', 'student', 'application_file', 'applied_at', 'counseling_type', 'test_date', 'test_timeslot', 'approved', 'denied')
+        counseling_applications = CounselingApplication.objects.filter(approved=False,denied=False).values('id', 'student', 'application_file', 'applied_at', 'counseling_type', 'test_date', 'test_timeslot', 'approved', 'denied')
 
         for counseling_application in counseling_applications:
             student = Student.objects.get(id=counseling_application['student'])
@@ -391,6 +391,11 @@ class CounselingApplicationApproval(APIView):
         
         # 신청서 승인 상태로 바꾸기
         counseling_application = CounselingApplication.objects.get(id=application_id)
+        all_counseling_applications = CounselingApplication.objects.filter(student = counseling_application.student)
+        for application in all_counseling_applications:
+            if application != counseling_application:
+                application.denied = True
+                application.save()
         counseling_application.approved = True
         counseling_application.save()
         
@@ -461,7 +466,7 @@ class CounselingApplicationDenial(APIView):
         counseling_application = CounselingApplication.objects.get(id=application_id)
         counseling_application.denied = True
         counseling_application.save()
-            
+        
         return Response(status=status.HTTP_200_OK)
 
 
