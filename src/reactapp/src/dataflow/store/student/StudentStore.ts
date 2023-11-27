@@ -91,11 +91,14 @@ class StudentStore {
   processSchedule = () => {
     let schedule: { [key: string]: DateInfo } = {};
 
-    this.testSchedules.forEach((session) => {
-      schedule[session.test_date] = {
+    let test_schedule = this.testSchedules.sort((a, b) =>
+      compareDateOnly(b.test_date, a.test_date)
+    )[0];
+    if (test_schedule) {
+      schedule[test_schedule.test_date] = {
         task: "심리",
       };
-    });
+    }
     this.schedules.forEach((session) => {
       //extract only xxxx-xx-xx
 

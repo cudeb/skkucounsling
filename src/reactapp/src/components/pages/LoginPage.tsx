@@ -12,13 +12,16 @@ const LoginPage = observer(() => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
 
+  const [isLogin, setIsLogin] = React.useState(false);
+
   useEffect(() => {
     if (loginStore.loginSuccess) {
+      setIsLogin(true);
       setTimeout(() => {
         if (cookieManager.readCookie(ACCOUNT_TYPE) === "s")
           navigation("/student/home");
         else navigation("/admin/home");
-      }, 2000);
+      }, 3000);
     }
 
     if (loginStore.errorMsg) {
@@ -128,6 +131,7 @@ const LoginPage = observer(() => {
             onClick={() => {
               onClickLogin();
             }}
+            isDisabled={isLogin}
           >
             로그인
           </Button>
@@ -146,6 +150,7 @@ const LoginPage = observer(() => {
           style={{ width: "50%" }}
           size="lg"
           onClick={() => navigation("/signuppage")}
+          isDisabled={isLogin}
         >
           회원가입
         </Button>
